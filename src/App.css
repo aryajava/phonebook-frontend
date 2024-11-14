@@ -822,8 +822,8 @@ div .row {
 
 .card-item-text {
   font-size: 1rem;
-  margin: .1rem;
-  padding: .1rem;
+  margin: .3rem;
+  padding: 0;
 }
 
 .input-group {
@@ -902,7 +902,7 @@ button {
 }
 
 img {
-  width: 64px;
+  width: 80px;
   border-radius: 90px;
 }
 
@@ -914,4 +914,103 @@ a {
 
 a:hover {
   text-decoration: none;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Modal Header */
+.modal-header {
+  padding: 1vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-header h1 {
+  font-size: medium;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Modal Body */
+.modal-body {
+  padding: 1vw;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+
+.modal-body p {
+  margin: 0 auto 1vw;
+}
+
+/* Modal Footer */
+.modal-footer {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  padding: calc(1rem - 0.5rem * 0.5);
+}
+
+.modal-footer form {
+  display: inline-flex;
+}
+
+/* Modal Content */
+.modal-content {
+  position: relative;
+  background-color: #fefefe;
+  margin: 2vw auto;
+  padding: 0;
+  border: 1px solid #888;
+  border-radius: 10px;
+  width: 30%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+}
+
+.modal.show {
+  display: block;
+}
+
+/* Add Animation */
+@keyframes animatetop {
+  from {
+    top: -300px;
+    opacity: 0;
+  }
+
+  to {
+    top: 0;
+    opacity: 1;
+  }
 }
