@@ -1,29 +1,25 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
 
 export const PhonebookItem = ({ avatar, name, phone }) => {
   const avatarWidth = '64';
   return (
-    <div className='card'>
-      <div className='card-body'>
-        <div className='row'>
-          <div className='col-md-6'>
-            <div className=''>
+    <div className='col-xl-3 col-md-4 col-12'>
+      <div className='card'>
+        <div className='card-body'>
+          <div className='row'>
+            <div className='col-4 p-1 justify-content-center'>
               <img src={avatar} alt={name} width={avatarWidth} />
             </div>
-          </div>
-          <div className='col-md-6'>
-            <div className='card-item-text'>{name}</div>
-            <div className='card-item-text'>{phone}</div>
-            <div className='row'>
-              <div className='col-6'>
-                <button type='button' className='btn btn-card'>
-                  <FontAwesomeIcon icon={faPencil} />
+            <div className='col-8 p-1'>
+              <p className='card-item-text'>{name}</p>
+              <p className='card-item-text'>{phone}</p>
+              <div className='row'>
+                <button type='button' className=' m-0 p-0 btn btn-card p-2'>
+                  <FontAwesomeIcon icon={faPenToSquare} />
                 </button>
-              </div>
-              <div className='col-6'>
-                <button type='button' className='btn btn-card'>
+                <button type='button' className=' m-0 p-0 btn btn-card p-2'>
                   <FontAwesomeIcon icon={faTrash} />
                 </button>
               </div>

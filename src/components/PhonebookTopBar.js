@@ -1,16 +1,18 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faArrowDownZA, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faUserPlus, faArrowDownZA, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 export const PhonebookTopBar = () => {
+  const handleFormAdd = (e) => {
+    e.preventDefault();
+    window.location.href = '/add';
+  }
   return (
-    <div className='row nav nav-top'>
-      <div className='col-md-1 btn-sort justify-content-end'>
-        <button className='btn btn-brown'>
-          <FontAwesomeIcon icon={faArrowDownZA} />
-        </button>
-      </div>
-      <div className='col-md-10'>
+    <div className='nav sticky-top justify-content-between'>
+      <button className='btn btn-brown p-3 mr-3'>
+        <FontAwesomeIcon icon={faArrowDownZA} />
+      </button>
+      <div className='flex-fill'>
         <div className='input-group'>
           <span className='input-group-text'>
             <FontAwesomeIcon icon={faSearch} />
@@ -18,11 +20,9 @@ export const PhonebookTopBar = () => {
           <input type='text' className='form-control' placeholder='Search...' />
         </div>
       </div>
-      <div className='col-md-1 btn-add justify-content-start'>
-        <button className='btn btn-brown'>
-          <FontAwesomeIcon icon={faPlus} />
-        </button>
-      </div >
+      <button type='button' onClick={handleFormAdd} className='btn btn-brown p-3 ml-3'>
+        <FontAwesomeIcon icon={faUserPlus} />
+      </button>
     </div >
   );
 }
