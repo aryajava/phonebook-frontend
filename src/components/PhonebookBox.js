@@ -1,44 +1,33 @@
-import React from 'react';
-import { PhonebookItem } from './PhonebookItem';
+import React, { useEffect, useState } from 'react';
 import { PhonebookList } from './PhonebookList';
 import { PhonebookTopBar } from './PhonebookTopBar';
 import { PhonebookDelete } from './PhonebookDelete';
+import axios from 'axios';
+
+const request = axios.create({
+  baseURL: 'http://localhost:3001/',
+  timeout: 1000,
+});
 
 export const PhonebookBox = () => {
+  const [phonebookItems, setPhonebookItems] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await request.get('api/phonebooks');
+        setPhonebookItems(response.data.phonebooks);
+      } catch (error) {
+        console.error(error.code);
+      }
+    }
+    fetchData();
+  }, []);
+
   return (
     <>
       <PhonebookTopBar />
-      <PhonebookList>
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-        <PhonebookItem avatar="https://pbs.twimg.com/profile_images/1755340821778305024/Vxn0EVS__400x400.jpg" name='John Doe' phone='+1234567890' />
-      </PhonebookList>
+      <PhonebookList phonebooks={phonebookItems} />
       <PhonebookDelete />
     </>
   );

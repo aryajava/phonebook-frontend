@@ -3,16 +3,19 @@ import './App.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { IndexPhonebook } from './routes/IndexPhonebook';
 import { FormPhonebook } from './routes/FormPhonebook';
+import ErrorPage from './routes/ErrorPage';
 
 
 const routes = createBrowserRouter([
   {
     path: '/',
-    element: <IndexPhonebook />
+    element: <IndexPhonebook />,
+    errorElement: <ErrorPage />
   },
   {
     path: '/add',
-    element: <FormPhonebook />
+    element: <FormPhonebook />,
+    errorElement: <ErrorPage />
   },
 ],
   {
@@ -27,8 +30,6 @@ const routes = createBrowserRouter([
 );
 
 const App = () => {
-  // reducer
-  // state
   return (
     <>
       <RouterProvider router={routes} future={{ v7_startTransition: true, v7_relativeSplatPath: true }} />
