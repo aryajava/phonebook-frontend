@@ -17,7 +17,7 @@ export const PhonebookTopBar = () => {
           <span className='input-group-text'>
             <FontAwesomeIcon icon={faSearch} />
           </span>
-          <input type='text' className='form-control' placeholder='Search...' />
+          <input type='text' className='form-control' id='search' placeholder='Search...' />
         </div>
       </div>
       <button type='button' onClick={handleFormAdd} className='btn btn-brown p-3 ml-3'>

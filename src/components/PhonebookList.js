@@ -1,20 +1,17 @@
 import React from 'react';
 import { PhonebookItem } from './PhonebookItem';
 
-export const PhonebookList = ({ phonebooks = [] }) => {
-  const list = phonebooks.map((phonebook) => (
-    <PhonebookItem
-      key={phonebook.id}
-      id={phonebook.id}
-      avatar={phonebook.avatar}
-      name={phonebook.name}
-      phone={phonebook.phone}
-    />
-  ));
-
+export const PhonebookList = ({ phonebookItems, updatePhonebookItem, removePhonebookItem }) => {
   return (
     <div className='row justify-content-center'>
-      {list}
+      {phonebookItems.map((item) => (
+        <PhonebookItem
+          key={item.id}
+          {...item}
+          updatePhonebookItem={updatePhonebookItem}
+          removePhonebookItem={removePhonebookItem}
+        />
+      ))}
     </div>
   );
-}
+};

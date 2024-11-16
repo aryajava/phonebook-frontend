@@ -1,32 +1,47 @@
+import { PhonebookDelete } from './PhonebookDelete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash, faSave } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
-import axios from 'axios';
-
-const request = axios.create({
-  baseURL: 'http://localhost:3001/',
-  timeout: 1000,
-});
+import { request } from './PhonebookBox';
 
 export const PhonebookItem = (props) => {
+  const { id, name, phone, avatar, updatePhonebookItem, removePhonebookItem } = props;
   const [isEditing, setIsEditing] = useState(false);
-  const [editedName, setEditedName] = useState(props.name);
-  const [editedPhone, setEditedPhone] = useState(props.phone);
+  const [editedName, setEditedName] = useState(name);
+  const [editedPhone, setEditedPhone] = useState(phone);
 
   const handleEditClick = () => {
     setIsEditing(true);
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async (e) => {
     setIsEditing(false);
-    // Here you can add logic to save the edited data
+    try {
+      const response = await request.put(id.toString(), {
+        name: editedName,
+        phone: editedPhone,
+      });
+      updatePhonebookItem(id, response.data);
+    } catch (error) {
+      console.error('Error updating phonebook:', error.code);
+    }
+  };
+
+  const handleDeleteClick = async () => {
+    try {
+      await request.delete(id.toString());
+      removePhonebookItem(id);
+    } catch (error) {
+      console.error('Error deleting phonebook:', error.code);
+    }
   };
 
   const showModal = () => {
     document.getElementById('deleteModal').classList.add('show');
+    document.getElementById('deleteItemName').innerText = name;
   };
 
-  const avatarUrl = props.avatar ? `http://localhost:3001/images/${props.id}/${props.avatar}` : 'http://localhost:3001/images/defaultAvatar.png';
+  const avatarUrl = `http://localhost:3001/images/${id}/${avatar}`;
 
   return (
     <div className='col-xl-3 col-md-4 col-12'>
@@ -34,7 +49,7 @@ export const PhonebookItem = (props) => {
         <div className='card-body'>
           <div className='row'>
             <div className='col-5 pr-3 justify-content-center'>
-              <img src={avatarUrl} alt={props.name} />
+              <img src={avatarUrl} alt={name} />
             </div>
             <div className='col-7'>
               {isEditing ? (
@@ -44,8 +59,8 @@ export const PhonebookItem = (props) => {
                 </>
               ) : (
                 <>
-                  <p className='card-item-text p-1'>{props.name}</p>
-                  <p className='card-item-text p-1'>{props.phone}</p>
+                  <p className='card-item-text p-1'>{name}</p>
+                  <p className='card-item-text p-1'>{phone}</p>
                 </>
               )}
               <div className='row'>
@@ -53,7 +68,7 @@ export const PhonebookItem = (props) => {
                   <FontAwesomeIcon icon={isEditing ? faSave : faPenToSquare} width={14} />
                 </button>
                 {!isEditing && (
-                  <button onClick={showModal} className='m-0 btn btn-card p-2'>
+                  <button onClick={showModal} className='m-0 btn btn-card p-2' >
                     <FontAwesomeIcon icon={faTrash} width={14} />
                   </button>
                 )}
@@ -62,6 +77,7 @@ export const PhonebookItem = (props) => {
           </div>
         </div>
       </div>
+      <PhonebookDelete name={name} handleDeleteClick={handleDeleteClick} />
     </div>
   );
 };

@@ -1,9 +1,10 @@
 import React from 'react';
 
-export const PhonebookDelete = ({ avatar, name, phone }) => {
+export const PhonebookDelete = ({ name, handleDeleteClick }) => {
   const closeDeleteModal = () => {
     document.getElementById('deleteModal').classList.remove('show');
-  }
+  };
+
   return (
     <>
       <div id="deleteModal" className="modal">
@@ -13,15 +14,14 @@ export const PhonebookDelete = ({ avatar, name, phone }) => {
             <span className="close" onClick={closeDeleteModal}>&times;</span>
           </div>
           <div className="modal-body">
-            <p>Apakah kamu yakin akan menghapus data '<span id="deleteItemName"></span>'?</p>
+            <p>Apakah kamu yakin akan menghapus data: '<span id="deleteItemName">{name}</span>'?</p>
           </div>
           <div className="modal-footer">
             <button type="button" className="btn btn-brown px-3 py-2 mx-2" onClick={closeDeleteModal}>No</button>
-            <button type="button" className="btn btn-brown px-3 py-2 mx-2">Yes</button>
+            <button type="button" className="btn btn-brown px-3 py-2 mx-2" onClick={handleDeleteClick}>Yes</button>
           </div>
         </div>
       </div>
-
     </>
   );
 };
