@@ -1,7 +1,7 @@
 import React from 'react';
 import { PhonebookItem } from './PhonebookItem';
 
-export const PhonebookList = ({ phonebookItems, updatePhonebookItem, removePhonebookItem }) => {
+export const PhonebookList = ({ phonebookItems, updatePhonebookItem, removePhonebookItem, showDeleteModal }) => {
   return (
     <div className='row justify-content-center'>
       {phonebookItems.map((item) => (
@@ -10,6 +10,7 @@ export const PhonebookList = ({ phonebookItems, updatePhonebookItem, removePhone
           {...item}
           updatePhonebookItem={updatePhonebookItem}
           removePhonebookItem={removePhonebookItem}
+          showDeleteModal={showDeleteModal}
         />
       ))}
     </div>

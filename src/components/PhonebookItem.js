@@ -1,11 +1,10 @@
-import { PhonebookDelete } from './PhonebookDelete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash, faSave } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
-import { request } from './PhonebookBox';
+import { request, getBaseURL } from './PhonebookBox';
 
 export const PhonebookItem = (props) => {
-  const { id, name, phone, avatar, updatePhonebookItem, removePhonebookItem } = props;
+  const { id, name, phone, avatar, updatePhonebookItem, showDeleteModal } = props;
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(name);
   const [editedPhone, setEditedPhone] = useState(phone);
@@ -27,21 +26,7 @@ export const PhonebookItem = (props) => {
     }
   };
 
-  const handleDeleteClick = async () => {
-    try {
-      await request.delete(id.toString());
-      removePhonebookItem(id);
-    } catch (error) {
-      console.error('Error deleting phonebook:', error.code);
-    }
-  };
-
-  const showModal = () => {
-    document.getElementById('deleteModal').classList.add('show');
-    document.getElementById('deleteItemName').innerText = name;
-  };
-
-  const avatarUrl = `http://localhost:3001/images/${id}/${avatar}`;
+  const avatarUrl = `${getBaseURL()}/images/${id}/${avatar}`;
 
   return (
     <div className='col-xl-3 col-md-4 col-12'>
@@ -68,7 +53,7 @@ export const PhonebookItem = (props) => {
                   <FontAwesomeIcon icon={isEditing ? faSave : faPenToSquare} width={14} />
                 </button>
                 {!isEditing && (
-                  <button onClick={showModal} className='m-0 btn btn-card p-2' >
+                  <button onClick={() => showDeleteModal({ id, name })} className='m-0 btn btn-card p-2' >
                     <FontAwesomeIcon icon={faTrash} width={14} />
                   </button>
                 )}
@@ -77,7 +62,6 @@ export const PhonebookItem = (props) => {
           </div>
         </div>
       </div>
-      <PhonebookDelete name={name} handleDeleteClick={handleDeleteClick} />
     </div>
   );
 };
