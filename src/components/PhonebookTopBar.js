@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus, faArrowDownAZ, faArrowUpAZ, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { debounce } from 'lodash';
@@ -17,7 +17,7 @@ export const PhonebookTopBar = ({ setSearchKeyword, setSortOrder }) => {
     setSortOrderState((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
   };
 
-  const debouncedSearch = useCallback(debounce((value) => setSearchKeyword(value), 300), [setSearchKeyword]);
+  const debouncedSearch = useMemo(() => debounce(setSearchKeyword, 200, { 'trailing': true }), [setSearchKeyword]);
 
   const handleSearchChange = (e) => {
     const value = e.target.value;

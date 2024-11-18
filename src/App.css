@@ -754,12 +754,12 @@ div .row {
 }
 
 .btn-brown {
-  background-color: rgb(192, 153, 123);
+  background-color: rgb(182 128 47);
   color: black;
 }
 
 .btn-brown:hover {
-  background-color: rgb(161, 126, 109)
+  background-color: rgb(202, 148, 47);
 }
 
 .justify-content-between {
@@ -953,6 +953,30 @@ button {
 img {
   width: 80px;
   border-radius: 90px;
+}
+
+@media (min-width: 576px) {
+  img {
+    width: 100px;
+  }
+}
+
+@media (min-width: 768px) {
+  img {
+    width: 64px;
+  }
+}
+
+@media (min-width: 992px) {
+  img {
+    width: 80px;
+  }
+}
+
+@media (min-width: 1200px) {
+  img {
+    width: 64px;
+  }
 }
 
 a {

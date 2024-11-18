@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export const PhonebookAdd = () => {
@@ -6,6 +7,7 @@ export const PhonebookAdd = () => {
   const [phone, setPhone] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const navigate = useNavigate();
 
   const request = axios.create({
     baseURL: 'http://localhost:3001/',
@@ -14,7 +16,7 @@ export const PhonebookAdd = () => {
 
   const handleCancel = (e) => {
     e.preventDefault();
-    window.location.href = '/';
+    navigate('/');
   };
 
   const closeAlert = () => {

@@ -3,6 +3,8 @@ import { throttle } from 'lodash';
 import { PhonebookList } from './PhonebookList';
 import { PhonebookTopBar } from './PhonebookTopBar';
 import { PhonebookDelete } from './PhonebookDelete';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
 export const getBaseURL = () => {
@@ -45,8 +47,8 @@ export const PhonebookBox = () => {
   };
 
   useEffect(() => {
-    setPage(1); // Reset ke halaman pertama saat filter berubah
-    setPhonebookItems([]); // Hapus item sebelumnya untuk mencegah duplikasi
+    setPage(1);
+    setPhonebookItems([]);
   }, [searchKeyword, sortOrder]);
 
   useEffect(() => {
@@ -63,7 +65,7 @@ export const PhonebookBox = () => {
       if (entries[0].isIntersecting && hasMore) {
         setPage((prevPage) => prevPage + 1);
       }
-    }, 200); // 200ms throttle delay
+    }, 200);
 
     observer.current = new IntersectionObserver(handleObserver);
     if (lastPhonebookElementRef.current) {
@@ -100,11 +102,11 @@ export const PhonebookBox = () => {
       <PhonebookTopBar
         setSearchKeyword={(keyword) => {
           setSearchKeyword(keyword);
-          setPage(1); // Reset ke halaman pertama
+          setPage(1);
         }}
         setSortOrder={(order) => {
           setSortOrder(order);
-          setPage(1); // Reset ke halaman pertama
+          setPage(1);
         }}
       />
       <PhonebookList
@@ -113,16 +115,22 @@ export const PhonebookBox = () => {
         removePhonebookItem={removePhonebookItem}
         showDeleteModal={showDeleteModal}
       />
-      {isFetching}
+      {isFetching &&
+        <div className='row justify-content-center p-3'>
+          <FontAwesomeIcon icon={faSpinner} spin size='2x' />
+        </div>
+      }
       <div ref={lastPhonebookElementRef}></div>
-      {isDeleteModalVisible && itemToDelete && (
-        <PhonebookDelete
-          id={itemToDelete.id}
-          name={itemToDelete.name}
-          removePhonebookItem={removePhonebookItem}
-          closeDeleteModal={closeDeleteModal}
-        />
-      )}
+      {
+        isDeleteModalVisible && itemToDelete && (
+          <PhonebookDelete
+            id={itemToDelete.id}
+            name={itemToDelete.name}
+            removePhonebookItem={removePhonebookItem}
+            closeDeleteModal={closeDeleteModal}
+          />
+        )
+      }
     </>
   );
 };
