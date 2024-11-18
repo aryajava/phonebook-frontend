@@ -67,7 +67,7 @@ export const PhonebookBox = () => {
       }
     }, 200);
 
-    observer.current = new IntersectionObserver(handleObserver);
+    observer.current = new IntersectionObserver(handleObserver, { threshold: 1 });
     if (lastPhonebookElementRef.current) {
       observer.current.observe(lastPhonebookElementRef.current);
     }
