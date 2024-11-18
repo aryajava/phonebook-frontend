@@ -2,14 +2,16 @@ import React, { useState, useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus, faArrowDownAZ, faArrowUpAZ, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { debounce } from 'lodash';
+import { useNavigate } from 'react-router-dom';
 
 export const PhonebookTopBar = ({ setSearchKeyword, setSortOrder }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrderState] = useState('asc');
+  const navigate = useNavigate();
 
   const handleFormAdd = (e) => {
     e.preventDefault();
-    window.location.href = '/add';
+    navigate('/add');
   };
 
   const handleSortClick = () => {
