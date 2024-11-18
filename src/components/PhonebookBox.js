@@ -23,12 +23,14 @@ export const PhonebookBox = () => {
   const [page, setPage] = useState(1);
   const [isFetching, setIsFetching] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [sortOrder, setSortOrder] = useState('asc');
   const observer = useRef();
 
-  const fetchData = async (page) => {
+  const fetchData = async (page, searchKeyword, sortOrder) => {
     setIsFetching(true);
     try {
-      const response = await request.get(`?page=${page}`);
+      const response = await request.get(`?page=${page}&keyword=${searchKeyword}&sort=${sortOrder}`);
       setPhonebookItems((prevItems) => {
         const newItems = response.data.phonebooks.filter(
           (newItem) => !prevItems.some((item) => item.id === newItem.id)
@@ -37,14 +39,19 @@ export const PhonebookBox = () => {
       });
       setHasMore(response.data.phonebooks.length > 0);
     } catch (error) {
-      console.error(error.code);
+      console.error(error.message);
     }
     setIsFetching(false);
   };
 
   useEffect(() => {
-    fetchData(page);
-  }, [page]);
+    setPage(1); // Reset ke halaman pertama saat filter berubah
+    setPhonebookItems([]); // Hapus item sebelumnya untuk mencegah duplikasi
+  }, [searchKeyword, sortOrder]);
+
+  useEffect(() => {
+    fetchData(page, searchKeyword, sortOrder);
+  }, [page, searchKeyword, sortOrder]);
 
   const lastPhonebookElementRef = useRef();
 
@@ -90,7 +97,16 @@ export const PhonebookBox = () => {
 
   return (
     <>
-      <PhonebookTopBar />
+      <PhonebookTopBar
+        setSearchKeyword={(keyword) => {
+          setSearchKeyword(keyword);
+          setPage(1); // Reset ke halaman pertama
+        }}
+        setSortOrder={(order) => {
+          setSortOrder(order);
+          setPage(1); // Reset ke halaman pertama
+        }}
+      />
       <PhonebookList
         phonebookItems={phonebookItems}
         updatePhonebookItem={updatePhonebookItem}
