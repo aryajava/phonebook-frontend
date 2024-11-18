@@ -820,8 +820,44 @@ div .row {
   border-radius: 0 0 5px 5px;
 }
 
+/* Placeholder Glow Effect */
+.placeholder {
+  display: inline-block;
+  background-color: #e9ecef;
+  border-radius: 0.25rem;
+  animation: placeholder-glow 1.5s infinite linear;
+}
+
+.placeholder.glow {
+  animation: placeholder-glow 1.5s infinite linear;
+}
+
+.placeholder-text {
+  width: 100%;
+  height: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.card .placeholder {
+  margin-bottom: 1rem;
+}
+
 .card-item-text {
   font-size: 1rem;
+}
+
+@keyframes placeholder-glow {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .input-group {
