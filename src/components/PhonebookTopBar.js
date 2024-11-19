@@ -1,12 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus, faArrowDownAZ, faArrowUpAZ, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { debounce } from 'lodash';
 import { useNavigate } from 'react-router-dom';
+import { usePhonebookContext } from '../context/PhonebookContext';
 
-export const PhonebookTopBar = ({ setSearchKeyword, setSortOrder }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortOrder, setSortOrderState] = useState('asc');
+export const PhonebookTopBar = () => {
+  const { state, dispatch } = usePhonebookContext();
   const navigate = useNavigate();
 
   const handleFormAdd = (e) => {
@@ -15,22 +15,24 @@ export const PhonebookTopBar = ({ setSearchKeyword, setSortOrder }) => {
   };
 
   const handleSortClick = () => {
-    setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
-    setSortOrderState((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
+    const newSortOrder = state.sortOrder === 'asc' ? 'desc' : 'asc';
+    dispatch({ type: 'SET_SORT_ORDER', payload: newSortOrder });
   };
 
-  const debouncedSearch = useMemo(() => debounce(setSearchKeyword, 200, { 'trailing': true }), [setSearchKeyword]);
+  const debouncedSearch = useMemo(
+    () => debounce((value) => dispatch({ type: 'SET_SEARCH_KEYWORD', payload: value }), 200),
+    [dispatch]
+  );
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
-    setSearchTerm(value);
     debouncedSearch(value);
   };
 
   return (
     <div className='nav sticky-top justify-content-between'>
       <button className='btn btn-brown p-3 mr-3' id='sortPhonebook' onClick={handleSortClick}>
-        <FontAwesomeIcon icon={sortOrder === 'asc' ? faArrowDownAZ : faArrowUpAZ} />
+        <FontAwesomeIcon icon={state.sortOrder === 'asc' ? faArrowDownAZ : faArrowUpAZ} />
       </button>
       <div className='flex-fill'>
         <div className='input-group'>
@@ -42,7 +44,7 @@ export const PhonebookTopBar = ({ setSearchKeyword, setSortOrder }) => {
             className='form-control'
             id='searchPhonebook'
             placeholder='Search...'
-            value={searchTerm}
+            value={state.searchKeyword}
             onChange={handleSearchChange}
           />
         </div>

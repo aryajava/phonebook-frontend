@@ -91,16 +91,7 @@ export const PhonebookBox = () => {
 
   return (
     <>
-      <PhonebookTopBar
-        setSearchKeyword={(keyword) => {
-          dispatch({ type: 'SET_SEARCH_KEYWORD', payload: keyword });
-          dispatch({ type: 'SET_PAGE', payload: 1 });
-        }}
-        setSortOrder={(order) => {
-          dispatch({ type: 'SET_SORT_ORDER', payload: order });
-          dispatch({ type: 'SET_PAGE', payload: 1 });
-        }}
-      />
+      <PhonebookTopBar />
       <PhonebookList
         phonebookItems={state.phonebookItems}
         updatePhonebookItem={updatePhonebookItem}
