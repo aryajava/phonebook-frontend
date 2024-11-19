@@ -5,18 +5,7 @@ import { PhonebookTopBar } from './PhonebookTopBar';
 import { PhonebookDelete } from './PhonebookDelete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import axios from 'axios';
-
-export const getBaseURL = () => {
-  const port = 3001;
-  const { protocol, hostname } = window.location;
-  return `${protocol}//${hostname}:${port}`;
-};
-
-export const request = axios.create({
-  baseURL: `${getBaseURL()}/api/phonebooks/`,
-  timeout: 1000,
-});
+import { request } from '../services/phonebookApi';
 
 export const PhonebookBox = () => {
   const [phonebookItems, setPhonebookItems] = useState([]);
@@ -52,7 +41,7 @@ export const PhonebookBox = () => {
   }, [searchKeyword, sortOrder]);
 
   useEffect(() => {
-    fetchData(page, searchKeyword, sortOrder);
+    Promise.resolve().then(() => fetchData(page, searchKeyword, sortOrder));
   }, [page, searchKeyword, sortOrder]);
 
   const lastPhonebookElementRef = useRef();
@@ -65,9 +54,9 @@ export const PhonebookBox = () => {
       if (entries[0].isIntersecting && hasMore) {
         setPage((prevPage) => prevPage + 1);
       }
-    }, 200);
+    }, 500);
 
-    observer.current = new IntersectionObserver(handleObserver, { threshold: 1 });
+    observer.current = new IntersectionObserver(handleObserver, { threshold: 0.5, rootMargin: '0px 0px 100px 0px' });
     if (lastPhonebookElementRef.current) {
       observer.current.observe(lastPhonebookElementRef.current);
     }

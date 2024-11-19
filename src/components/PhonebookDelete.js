@@ -1,5 +1,5 @@
 import React from 'react';
-import { request } from './PhonebookBox';
+import { request } from '../services/phonebookApi';
 
 export const PhonebookDelete = (props) => {
   const { id, name, removePhonebookItem, closeDeleteModal } = props;

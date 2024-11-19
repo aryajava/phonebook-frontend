@@ -1,7 +1,7 @@
+import React, { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash, faSave } from '@fortawesome/free-solid-svg-icons';
-import React, { useState, useRef } from 'react';
-import { request, getBaseURL } from './PhonebookBox';
+import { request, getBaseURL } from '../services/phonebookApi';
 
 export const PhonebookItem = (props) => {
   const { id, name, phone, avatar, updatePhonebookItem, showDeleteModal } = props;
