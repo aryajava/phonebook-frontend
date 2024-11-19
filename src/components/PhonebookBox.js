@@ -38,6 +38,7 @@ export const PhonebookBox = () => {
   useEffect(() => {
     setPage(1);
     setPhonebookItems([]);
+    if (!searchKeyword && sortOrder === 'asc') localStorage.clear();
   }, [searchKeyword, sortOrder]);
 
   useEffect(() => {
