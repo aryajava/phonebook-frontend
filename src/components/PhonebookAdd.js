@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { request } from '../services/phonebookApi';
 
 export const PhonebookAdd = () => {
   const [name, setName] = useState('');
@@ -8,11 +8,6 @@ export const PhonebookAdd = () => {
   const [alertMessage, setAlertMessage] = useState('');
   const [showAlert, setShowAlert] = useState(false);
   const navigate = useNavigate();
-
-  const request = axios.create({
-    baseURL: 'http://localhost:3001/',
-    timeout: 1000,
-  });
 
   const handleCancel = (e) => {
     e.preventDefault();

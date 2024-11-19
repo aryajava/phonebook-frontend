@@ -1,69 +1,47 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { throttle } from 'lodash';
 import { PhonebookList } from './PhonebookList';
 import { PhonebookTopBar } from './PhonebookTopBar';
-import { PhonebookDelete } from './PhonebookDelete';
+import { usePhonebookContext } from '../context/PhonebookContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import axios from 'axios';
-
-export const getBaseURL = () => {
-  const port = 3001;
-  const { protocol, hostname } = window.location;
-  return `${protocol}//${hostname}:${port}`;
-};
-
-export const request = axios.create({
-  baseURL: `${getBaseURL()}/api/phonebooks/`,
-  timeout: 1000,
-});
+import { fetchPhonebooks } from '../services/phonebookApi';
+import { PhonebookDelete } from './PhonebookDelete';
 
 export const PhonebookBox = () => {
-  const [phonebookItems, setPhonebookItems] = useState([]);
-  const [itemToDelete, setItemToDelete] = useState(null);
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-  const [page, setPage] = useState(1);
-  const [isFetching, setIsFetching] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [searchKeyword, setSearchKeyword] = useState('');
-  const [sortOrder, setSortOrder] = useState('asc');
+  const { state, dispatch } = usePhonebookContext();
   const observer = useRef();
 
-  const fetchData = async (page, searchKeyword, sortOrder) => {
-    setIsFetching(true);
+  const fetchData = async () => {
+    dispatch({ type: 'SET_FETCHING', payload: true });
     try {
-      const response = await request.get(`?page=${page}&keyword=${searchKeyword}&sort=${sortOrder}`);
-      setPhonebookItems((prevItems) => {
-        const newItems = response.data.phonebooks.filter(
-          (newItem) => !prevItems.some((item) => item.id === newItem.id)
-        );
-        return [...prevItems, ...newItems];
+      const data = await fetchPhonebooks(state.page, state.searchKeyword, state.sortOrder);
+      dispatch({
+        type: 'SET_ITEMS', payload: {
+          items: data.phonebooks,
+          hasMore: data.phonebooks.length > 0,
+          page: state.page,
+        }
       });
-      setHasMore(response.data.phonebooks.length > 0);
     } catch (error) {
-      console.error(error.message);
+      console.error('Error fetching phonebooks:', error.code);
     }
-    setIsFetching(false);
+    dispatch({ type: 'SET_FETCHING', payload: false });
   };
 
   useEffect(() => {
-    setPage(1);
-    setPhonebookItems([]);
-  }, [searchKeyword, sortOrder]);
-
-  useEffect(() => {
-    fetchData(page, searchKeyword, sortOrder);
-  }, [page, searchKeyword, sortOrder]);
+    fetchData();
+  }, [state.page, state.searchKeyword, state.sortOrder]);
 
   const lastPhonebookElementRef = useRef();
 
   useEffect(() => {
-    if (isFetching) return;
+    if (state.isFetching) return;
     if (observer.current) observer.current.disconnect();
 
     const handleObserver = throttle((entries) => {
-      if (entries[0].isIntersecting && hasMore) {
-        setPage((prevPage) => prevPage + 1);
+      if (entries[0].isIntersecting && state.hasMore) {
+        dispatch({ type: 'SET_PAGE', payload: state.page + 1 });
       }
     }, 200);
 
@@ -75,57 +53,71 @@ export const PhonebookBox = () => {
     return () => {
       if (observer.current) observer.current.disconnect();
     };
-  }, [isFetching, hasMore]);
+  }, [state.isFetching, state.hasMore]);
+
+  useEffect(() => {
+    dispatch({
+      type: 'RESET',
+      payload: { keyword: state.searchKeyword, order: state.sortOrder },
+    });
+  }, [state.searchKeyword, state.sortOrder]);
 
   const showDeleteModal = (item) => {
-    setItemToDelete(item);
-    setIsDeleteModalVisible(true);
+    dispatch({
+      type: 'SHOW_DELETE_MODAL',
+      payload: item,
+    });
   };
 
   const closeDeleteModal = () => {
-    setItemToDelete(null);
-    setIsDeleteModalVisible(false);
+    dispatch({
+      type: 'CLOSE_DELETE_MODAL',
+    });
   };
 
   const updatePhonebookItem = (id, updatedItem) => {
-    setPhonebookItems((prevItems) =>
-      prevItems.map((item) => (item.id === id ? updatedItem : item))
-    );
+    dispatch({
+      type: 'UPDATE_ITEM',
+      payload: { id, updatedItem },
+    });
   };
 
   const removePhonebookItem = (id) => {
-    setPhonebookItems((prevItems) => prevItems.filter((item) => item.id !== id));
+    dispatch({
+      type: 'REMOVE_ITEM',
+      payload: { id },
+    });
   };
 
   return (
     <>
       <PhonebookTopBar
         setSearchKeyword={(keyword) => {
-          setSearchKeyword(keyword);
-          setPage(1);
+          dispatch({ type: 'SET_SEARCH_KEYWORD', payload: keyword });
+          dispatch({ type: 'SET_PAGE', payload: 1 });
         }}
         setSortOrder={(order) => {
-          setSortOrder(order);
-          setPage(1);
+          dispatch({ type: 'SET_SORT_ORDER', payload: order });
+          dispatch({ type: 'SET_PAGE', payload: 1 });
         }}
       />
       <PhonebookList
-        phonebookItems={phonebookItems}
+        phonebookItems={state.phonebookItems}
         updatePhonebookItem={updatePhonebookItem}
         removePhonebookItem={removePhonebookItem}
         showDeleteModal={showDeleteModal}
       />
-      {isFetching &&
+      {state.isFetching &&
         <div className='row justify-content-center p-3'>
           <FontAwesomeIcon icon={faSpinner} spin size='2x' />
         </div>
       }
       <div ref={lastPhonebookElementRef}></div>
       {
-        isDeleteModalVisible && itemToDelete && (
+        state.isDeleteModalVisible && state.itemToDelete && (
           <PhonebookDelete
-            id={itemToDelete.id}
-            name={itemToDelete.name}
+            id={state.itemToDelete.id}
+            name={state.itemToDelete.name}
             removePhonebookItem={removePhonebookItem}
             closeDeleteModal={closeDeleteModal}
           />

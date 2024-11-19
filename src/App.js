@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { IndexPhonebook } from './routes/IndexPhonebook';
 import { FormPhonebook } from './routes/FormPhonebook';
 import ErrorPage from './routes/ErrorPage';
-
+import { PhonebookProvider } from './context/PhonebookContext';
 
 const routes = createBrowserRouter([
   {
@@ -31,9 +31,9 @@ const routes = createBrowserRouter([
 
 const App = () => {
   return (
-    <>
+    <PhonebookProvider>
       <RouterProvider router={routes} future={{ v7_startTransition: true, v7_relativeSplatPath: true }} />
-    </>
+    </PhonebookProvider>
   );
 }
 
