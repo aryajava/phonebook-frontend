@@ -5,8 +5,8 @@ import { debounce } from 'lodash';
 import { useNavigate } from 'react-router-dom';
 
 export const PhonebookTopBar = ({ setSearchKeyword, setSortOrder }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortOrder, setSortOrderState] = useState('asc');
+  const [searchTerm, setSearchTerm] = useState(localStorage.getItem('searchKeyword') || '');
+  const [sortOrder, setSortOrderState] = useState(localStorage.getItem('sortOrder') || 'asc');
   const navigate = useNavigate();
 
   const handleFormAdd = (e) => {
@@ -15,11 +15,18 @@ export const PhonebookTopBar = ({ setSearchKeyword, setSortOrder }) => {
   };
 
   const handleSortClick = () => {
-    setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
-    setSortOrderState((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
+    const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortOrder(newSortOrder);
+    setSortOrderState(newSortOrder);
+    localStorage.setItem('sortOrder', newSortOrder);
+    // setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
+    // setSortOrderState((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
   };
 
-  const debouncedSearch = useMemo(() => debounce(setSearchKeyword, 200, { 'trailing': true }), [setSearchKeyword]);
+  const debouncedSearch = useMemo(() => debounce((keyword) => {
+    setSearchKeyword(keyword);
+    localStorage.setItem('searchKeyword', keyword);
+  }, 200), [setSearchKeyword]);
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -47,7 +54,7 @@ export const PhonebookTopBar = ({ setSearchKeyword, setSortOrder }) => {
           />
         </div>
       </div>
-      <button type='button' onClick={handleFormAdd} className='btn btn-brown p-3 ml-3'>
+      <button type='button' onClick={handleFormAdd} className='btn btn-brown p-3 ml-3' id='addPhonebook'>
         <FontAwesomeIcon icon={faUserPlus} />
       </button>
     </div>

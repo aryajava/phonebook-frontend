@@ -14,8 +14,8 @@ export const PhonebookBox = () => {
   const [page, setPage] = useState(1);
   const [isFetching, setIsFetching] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [searchKeyword, setSearchKeyword] = useState('');
-  const [sortOrder, setSortOrder] = useState('asc');
+  const [searchKeyword, setSearchKeyword] = useState(localStorage.getItem('searchKeyword') || '');
+  const [sortOrder, setSortOrder] = useState(localStorage.getItem('sortOrder') || 'asc');
   const observer = useRef();
 
   const fetchData = async (page, searchKeyword, sortOrder) => {
