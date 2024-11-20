@@ -12,17 +12,24 @@ export const PhonebookBox = () => {
   const { state, dispatch } = usePhonebookContext();
   const observer = useRef();
 
+  const isDuplicate = (newItems) => {
+    const existingIds = new Set(state.phonebookItems.map(item => item.id));
+    return newItems.some(item => existingIds.has(item.id));
+  };
+
   const fetchData = async () => {
     dispatch({ type: 'SET_FETCHING', payload: true });
     try {
       const data = await fetchPhonebooks(state.page, state.searchKeyword, state.sortOrder);
-      dispatch({
-        type: 'SET_ITEMS', payload: {
-          items: data.phonebooks,
-          hasMore: data.phonebooks.length > 0,
-          page: state.page,
-        }
-      });
+      if (!isDuplicate(data.phonebooks)) {
+        dispatch({
+          type: 'SET_ITEMS', payload: {
+            items: data.phonebooks,
+            hasMore: data.phonebooks.length > 0,
+            page: state.page,
+          }
+        });
+      }
     } catch (error) {
       console.error('Error fetching phonebooks:', error.code);
     }
@@ -45,7 +52,7 @@ export const PhonebookBox = () => {
       }
     }, 200);
 
-    observer.current = new IntersectionObserver(handleObserver, { threshold: 1 });
+    observer.current = new IntersectionObserver(handleObserver, { threshold: 0.5, rootMargin: '0px 0px 100px 0px' });
     if (lastPhonebookElementRef.current) {
       observer.current.observe(lastPhonebookElementRef.current);
     }
@@ -53,7 +60,7 @@ export const PhonebookBox = () => {
     return () => {
       if (observer.current) observer.current.disconnect();
     };
-  }, [state.isFetching, state.hasMore]);
+  }, [state.isFetching, state.hasMore, dispatch, state.page]);
 
   useEffect(() => {
     dispatch({
@@ -69,33 +76,11 @@ export const PhonebookBox = () => {
     });
   };
 
-  const closeDeleteModal = () => {
-    dispatch({
-      type: 'CLOSE_DELETE_MODAL',
-    });
-  };
-
-  const updatePhonebookItem = (id, updatedItem) => {
-    dispatch({
-      type: 'UPDATE_ITEM',
-      payload: { id, updatedItem },
-    });
-  };
-
-  const removePhonebookItem = (id) => {
-    dispatch({
-      type: 'REMOVE_ITEM',
-      payload: { id },
-    });
-  };
-
   return (
     <>
       <PhonebookTopBar />
       <PhonebookList
         phonebookItems={state.phonebookItems}
-        updatePhonebookItem={updatePhonebookItem}
-        removePhonebookItem={removePhonebookItem}
         showDeleteModal={showDeleteModal}
       />
       {state.isFetching &&
@@ -109,8 +94,6 @@ export const PhonebookBox = () => {
           <PhonebookDelete
             id={state.itemToDelete.id}
             name={state.itemToDelete.name}
-            removePhonebookItem={removePhonebookItem}
-            closeDeleteModal={closeDeleteModal}
           />
         )
       }

@@ -1,16 +1,17 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash, faSave } from '@fortawesome/free-solid-svg-icons';
 import React, { useState, useRef } from 'react';
-import { getBaseURL, request } from '../services/phonebookApi';
+import { getAvatar, updatePhonebook, updateAvatar } from '../services/phonebookApi';
+import { usePhonebookContext } from '../context/PhonebookContext';
 
 export const PhonebookItem = (props) => {
-  const { id, name, phone, avatar, updatePhonebookItem, showDeleteModal } = props;
+  const { id, name, phone, avatar } = props;
+  const { dispatch } = usePhonebookContext();
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(name);
   const [editedPhone, setEditedPhone] = useState(phone);
+  const [alertMessage, setAlertMessage] = useState(null);
   const fileInputRef = useRef(null);
-  const [alertMessage, setAlertMessage] = useState('');
-  const [showAlert, setShowAlert] = useState(false);
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -19,22 +20,19 @@ export const PhonebookItem = (props) => {
   const handleSaveClick = async (e) => {
     setIsEditing(false);
     try {
-      const response = await request.put(id.toString(), {
+      const data = await updatePhonebook(id, {
         name: editedName,
         phone: editedPhone,
       });
-      updatePhonebookItem(id, response.data);
+      dispatch({ type: 'UPDATE_ITEM', payload: { id, updatedItem: data } });
     } catch (error) {
       console.error('Error updating phonebook:', error.code);
+      setAlertMessage(error.response.data.error + '!');
     }
   };
 
   const handleImageClick = () => {
     fileInputRef.current.click();
-  };
-
-  const closeAlert = () => {
-    setShowAlert(false);
   };
 
   const handleFileChange = async (e) => {
@@ -44,28 +42,23 @@ export const PhonebookItem = (props) => {
       formData.append('avatar', file);
 
       try {
-        const response = await request.put(`${id}/avatar`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        updatePhonebookItem(id, response.data);
+        const data = await updateAvatar(id, formData);
+        dispatch({ type: 'UPDATE_ITEM', payload: { id, updatedItem: data } });
       } catch (error) {
         console.error('Error uploading avatar:', error.code);
         setAlertMessage(error.response.data.error + '!');
-        setShowAlert(true);
       }
     }
   };
 
-  const avatarUrl = `${getBaseURL()}/images/${id}/${avatar}`;
+  const avatarUrl = getAvatar(id, avatar);
 
   return (
     <div className='col-xl-3 col-md-4 col-12'>
       <div className='card'>
-        {showAlert && (
+        {alertMessage && (
           <div className='alert mb-3' id='alert' role='alert'>
-            <button className='close-btn' onClick={closeAlert}>x</button>
+            <button className='close-btn' onClick={() => setAlertMessage(null)}>x</button>
             <p id='alertMessage'>{alertMessage}</p>
           </div>
         )}
@@ -98,7 +91,7 @@ export const PhonebookItem = (props) => {
                   <FontAwesomeIcon icon={isEditing ? faSave : faPenToSquare} width={14} />
                 </button>
                 {!isEditing && (
-                  <button onClick={() => showDeleteModal({ id, name })} className='m-0 btn btn-card p-2' >
+                  <button onClick={() => dispatch({ type: 'SHOW_DELETE_MODAL', payload: { id, name } })} className='m-0 btn btn-card p-2' >
                     <FontAwesomeIcon icon={faTrash} width={14} />
                   </button>
                 )}

@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { request } from '../services/phonebookApi';
+import { usePhonebookContext } from '../context/PhonebookContext';
+import { addPhonebook } from '../services/phonebookApi';
 
 export const PhonebookAdd = () => {
+  const { dispatch } = usePhonebookContext();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [alertMessage, setAlertMessage] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
   const navigate = useNavigate();
 
   const handleCancel = (e) => {
     e.preventDefault();
-    navigate('/');
-  };
-
-  const closeAlert = () => {
     setShowAlert(false);
+    navigate('/');
   };
 
   const handleSave = async () => {
     try {
-      await request.post('api/phonebooks', { name, phone });
-      window.location.href = '/';
+      const newItem = await addPhonebook({ name, phone });
+      dispatch({ type: 'ADD_ITEM', payload: newItem });
+      navigate('/');
     } catch (error) {
       console.error(error.code);
       setAlertMessage(error.response.data.error + '!');
@@ -32,8 +32,8 @@ export const PhonebookAdd = () => {
   return (
     <>
       {showAlert && (
-        <div className='alert mt-3' id='alert' role='alert'>
-          <button className='close-btn' onClick={closeAlert}>x</button>
+        <div className='alert my-2' id='alert' role='alert'>
+          <button className='close-btn' onClick={() => setShowAlert(false)}>x</button>
           <p id='alertMessage'>{alertMessage}</p>
         </div>
       )}

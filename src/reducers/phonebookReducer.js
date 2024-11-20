@@ -5,6 +5,7 @@ export const initialState = {
   searchKeyword: '',
   sortOrder: 'asc',
   page: 1,
+  isEditModalVisible: false,
   isDeleteModalVisible: false,
   itemToDelete: null,
 };
@@ -35,6 +36,8 @@ export const phonebookReducer = (state, action) => {
         searchKeyword: action.payload.keyword,
         sortOrder: action.payload.order,
       };
+    case 'ADD_ITEM':
+      return { ...state, phonebookItems: [action.payload, ...state.phonebookItems] };
     case 'UPDATE_ITEM':
       return {
         ...state,

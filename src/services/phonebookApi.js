@@ -25,8 +25,48 @@ export const fetchPhonebooks = async (page, keyword = '', sort = 'asc') => {
     throw error;
   }
 };
+
+// get avatar image
+export const getAvatar = (id, avatar) => {
+  return `${getBaseURL()}/images/${id}/${avatar}`;
+};
+
 // add a new phonebook
-// update a phonebook
+export const addPhonebook = async (data) => {
+  try {
+    const response = await request.post('', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error adding phonebook:', error.code);
+    throw error;
+  }
+};
+
+// update a phonebook item
+export const updatePhonebook = async (id, data) => {
+  try {
+    const response = await request.put(id.toString(), data);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating phonebook:', error.code);
+    throw error;
+  }
+};
+
+// update avatar a phonebook
+export const updateAvatar = async (id, data) => {
+  try {
+    const response = await request.put(`${id}/avatar`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating avatar:', error.code);
+    throw error;
+  }
+};
 // delete a phonebook item
 export const deletePhonebookItem = async (id) => {
   try {
