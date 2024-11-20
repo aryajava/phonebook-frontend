@@ -952,30 +952,35 @@ button {
 
 img {
   width: 80px;
-  border-radius: 90px;
+  height: 80px;
+  border-radius: 90%;
 }
 
 @media (min-width: 576px) {
   img {
     width: 100px;
+    height: 100px;
   }
 }
 
 @media (min-width: 768px) {
   img {
     width: 64px;
+    height: 64px;
   }
 }
 
 @media (min-width: 992px) {
   img {
     width: 80px;
+    height: 80px;
   }
 }
 
 @media (min-width: 1200px) {
   img {
     width: 64px;
+    height: 64px;
   }
 }
 
