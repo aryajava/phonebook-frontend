@@ -38,6 +38,7 @@ export const PhonebookBox = () => {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.page, state.searchKeyword, state.sortOrder]);
 
   const lastPhonebookElementRef = useRef();
@@ -67,6 +68,7 @@ export const PhonebookBox = () => {
       type: 'RESET',
       payload: { keyword: state.searchKeyword, order: state.sortOrder },
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.searchKeyword, state.sortOrder]);
 
   const showDeleteModal = (item) => {
