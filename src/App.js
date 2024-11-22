@@ -1,10 +1,9 @@
-import './App.css';
-// import { PhonebookBox } from './components/PhonebookBox';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { IndexPhonebook } from './routes/IndexPhonebook';
 import { FormPhonebook } from './routes/FormPhonebook';
 import ErrorPage from './routes/ErrorPage';
 import { PhonebookProvider } from './context/PhonebookContext';
+import './styles/App.css';
 
 const routes = createBrowserRouter([
   {
