@@ -19,8 +19,6 @@ export const PhonebookTopBar = ({ setSearchKeyword, setSortOrder }) => {
     setSortOrder(newSortOrder);
     setSortOrderState(newSortOrder);
     localStorage.setItem('sortOrder', newSortOrder);
-    // setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
-    // setSortOrderState((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
   };
 
   const debouncedSearch = useMemo(() => debounce((keyword) => {
@@ -37,7 +35,7 @@ export const PhonebookTopBar = ({ setSearchKeyword, setSortOrder }) => {
   return (
     <div className='nav sticky-top justify-content-between'>
       <button className='btn btn-brown p-3 mr-3' id='sortPhonebook' onClick={handleSortClick}>
-        <FontAwesomeIcon icon={sortOrder === 'asc' ? faArrowDownAZ : faArrowUpAZ} />
+        <FontAwesomeIcon icon={sortOrder === 'asc' ? faArrowUpAZ : faArrowDownAZ} />
       </button>
       <div className='flex-fill'>
         <div className='input-group'>
