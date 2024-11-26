@@ -1,59 +1,53 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { throttle } from 'lodash';
 import { PhonebookList } from './PhonebookList';
 import { PhonebookTopBar } from './PhonebookTopBar';
-import { usePhonebookContext } from '../context/PhonebookContext';
+import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { fetchPhonebooks } from '../services/phonebookApi';
+import { fetchPhonebookItems } from '../features/phonebook/phonebookThunks';
+import { setPage, showDeleteModal, reset } from '../features/phonebook/phonebookSlice';
 import { PhonebookDelete } from './PhonebookDelete';
 
 export const PhonebookBox = () => {
-  const { state, dispatch } = usePhonebookContext();
+  const dispatch = useDispatch();
+  const {
+    phonebookItems,
+    isFetching,
+    searchKeyword,
+    sortOrder,
+    page,
+    isDeleteModalVisible,
+    itemToDelete,
+  } = useSelector((state) => state.phonebook);
+
+  const [hasMore, setHasMore] = useState(true);
+  const fetchingPage = useRef(null);
   const observer = useRef();
-
-  const isDuplicate = (newItems) => {
-    const existingIds = new Set(state.phonebookItems.map(item => item.id));
-    return newItems.some(item => existingIds.has(item.id));
-  };
-
-  const fetchData = async () => {
-    dispatch({ type: 'SET_FETCHING', payload: true });
-    try {
-      const data = await fetchPhonebooks(state.page, state.searchKeyword, state.sortOrder);
-      if (!isDuplicate(data.phonebooks)) {
-        dispatch({
-          type: 'SET_ITEMS', payload: {
-            items: data.phonebooks,
-            hasMore: data.phonebooks.length > 0,
-            page: state.page,
-          }
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching phonebooks:', error.code);
-    }
-    dispatch({ type: 'SET_FETCHING', payload: false });
-  };
-
-  useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.page, state.searchKeyword, state.sortOrder]);
-
   const lastPhonebookElementRef = useRef();
 
   useEffect(() => {
-    if (state.isFetching) return;
+    const fetchData = async () => {
+      if (isFetching || fetchingPage.current === page) return;
+      fetchingPage.current = page;
+      const moreItems = await dispatch(fetchPhonebookItems({ page, keyword: searchKeyword, sort: sortOrder })).unwrap();
+      setHasMore(moreItems);
+    };
+    fetchData();
+  }, [dispatch, page, searchKeyword, sortOrder, isFetching]);
+
+
+  useEffect(() => {
+    if (isFetching) return;
     if (observer.current) observer.current.disconnect();
 
     const handleObserver = throttle((entries) => {
-      if (entries[0].isIntersecting && state.hasMore) {
-        dispatch({ type: 'SET_PAGE', payload: state.page + 1 });
+      if (entries[0].isIntersecting && hasMore) {
+        dispatch(setPage(page + 1));
       }
-    }, 200);
+    }, 500);
 
-    observer.current = new IntersectionObserver(handleObserver, { threshold: 0.5, rootMargin: '0px 0px 100px 0px' });
+    observer.current = new IntersectionObserver(handleObserver, { threshold: 1, rootMargin: '0px 0px 100px 0px' });
     if (lastPhonebookElementRef.current) {
       observer.current.observe(lastPhonebookElementRef.current);
     }
@@ -61,41 +55,36 @@ export const PhonebookBox = () => {
     return () => {
       if (observer.current) observer.current.disconnect();
     };
-  }, [state.isFetching, state.hasMore, dispatch, state.page]);
+  }, [isFetching, hasMore, dispatch, page]);
 
   useEffect(() => {
-    dispatch({
-      type: 'RESET',
-      payload: { keyword: state.searchKeyword, order: state.sortOrder },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.searchKeyword, state.sortOrder]);
+    // dispatch(reset({ keyword: searchKeyword, order: sortOrder }));
+    fetchingPage.current = null;
+    dispatch(setPage(1));
+  }, [dispatch, searchKeyword, sortOrder]);
 
-  const showDeleteModal = (item) => {
-    dispatch({
-      type: 'SHOW_DELETE_MODAL',
-      payload: item,
-    });
+  const showDeleteModalHandler = (item) => {
+    dispatch(showDeleteModal(item));
   };
 
   return (
     <>
       <PhonebookTopBar />
       <PhonebookList
-        phonebookItems={state.phonebookItems}
-        showDeleteModal={showDeleteModal}
+        phonebookItems={phonebookItems}
+        showDeleteModal={showDeleteModalHandler}
       />
-      {state.isFetching &&
+      {isFetching &&
         <div className='row justify-content-center p-3'>
           <FontAwesomeIcon icon={faSpinner} spin size='2x' />
         </div>
       }
       <div ref={lastPhonebookElementRef}></div>
       {
-        state.isDeleteModalVisible && state.itemToDelete && (
+        isDeleteModalVisible && itemToDelete && (
           <PhonebookDelete
-            id={state.itemToDelete.id}
-            name={state.itemToDelete.name}
+            id={itemToDelete.id}
+            name={itemToDelete.name}
           />
         )
       }

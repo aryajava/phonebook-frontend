@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePhonebookContext } from '../context/PhonebookContext';
-import { addPhonebook } from '../services/phonebookApi';
+import { useDispatch } from 'react-redux';
+import { addNewPhonebook } from '../features/phonebook/phonebookThunks';
 
 export const PhonebookAdd = () => {
-  const { dispatch } = usePhonebookContext();
+  const dispatch = useDispatch();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [showAlert, setShowAlert] = useState(false);
@@ -17,10 +17,9 @@ export const PhonebookAdd = () => {
     navigate('/');
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     try {
-      const newItem = await addPhonebook({ name, phone });
-      dispatch({ type: 'ADD_ITEM', payload: newItem });
+      dispatch(addNewPhonebook({ name, phone }));
       navigate('/');
     } catch (error) {
       console.error(error.code);

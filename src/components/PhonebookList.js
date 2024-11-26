@@ -1,8 +1,7 @@
 import React from 'react';
 import { PhonebookItem } from './PhonebookItem';
 
-// export const PhonebookList = ({ phonebookItems, updatePhonebookItem, removePhonebookItem, showDeleteModal }) => {
-export const PhonebookList = ({ phonebookItems, showDeleteModal }) => {
+export const PhonebookList = ({ phonebookItems = [], showDeleteModal }) => {
   return (
     <div className='row justify-content-center' id='phonebookList'>
       {phonebookItems.map((item) => (

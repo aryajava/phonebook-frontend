@@ -1025,7 +1025,7 @@ a:hover {
 
 /* Modal Header */
 .modal-header {
-  padding: 1vw;
+  padding: 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1039,13 +1039,13 @@ a:hover {
 
 /* Modal Body */
 .modal-body {
-  padding: 1vw;
+  padding: 1rem;
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
 }
 
 .modal-body p {
-  margin: 0 auto 1vw;
+  margin: 0 auto 1rem;
 }
 
 /* Modal Footer */
@@ -1066,7 +1066,7 @@ a:hover {
 .modal-content {
   position: relative;
   background-color: #fefefe;
-  margin: 2vw auto;
+  margin: 1rem auto;
   padding: 0;
   border: 1px solid #888;
   border-radius: 10px;

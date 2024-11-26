@@ -1,12 +1,13 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash, faSave } from '@fortawesome/free-solid-svg-icons';
 import React, { useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { getAvatar, updatePhonebook, updateAvatar } from '../services/phonebookApi';
-import { usePhonebookContext } from '../context/PhonebookContext';
+import { updateItem, showDeleteModal } from '../features/phonebook/phonebookSlice';
 
 export const PhonebookItem = (props) => {
   const { id, name, phone, avatar } = props;
-  const { dispatch } = usePhonebookContext();
+  const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(name);
   const [editedPhone, setEditedPhone] = useState(phone);
@@ -24,7 +25,7 @@ export const PhonebookItem = (props) => {
         name: editedName,
         phone: editedPhone,
       });
-      dispatch({ type: 'UPDATE_ITEM', payload: { id, updatedItem: data } });
+      dispatch(updateItem({ id, updatedItem: data }));
     } catch (error) {
       console.error('Error updating phonebook:', error.code);
       setAlertMessage(error.response.data.error + '!');
@@ -43,7 +44,7 @@ export const PhonebookItem = (props) => {
 
       try {
         const data = await updateAvatar(id, formData);
-        dispatch({ type: 'UPDATE_ITEM', payload: { id, updatedItem: data } });
+        dispatch(updateItem({ id, updatedItem: data }));
       } catch (error) {
         console.error('Error uploading avatar:', error.code);
         setAlertMessage(error.response.data.error + '!');
@@ -91,7 +92,7 @@ export const PhonebookItem = (props) => {
                   <FontAwesomeIcon icon={isEditing ? faSave : faPenToSquare} width={14} />
                 </button>
                 {!isEditing && (
-                  <button onClick={() => dispatch({ type: 'SHOW_DELETE_MODAL', payload: { id, name } })} className='m-0 btn btn-card p-2' >
+                  <button onClick={() => dispatch(showDeleteModal({ id, name }))} className='m-0 btn btn-card p-2' >
                     <FontAwesomeIcon icon={faTrash} width={14} />
                   </button>
                 )}

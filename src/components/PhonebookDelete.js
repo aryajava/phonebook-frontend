@@ -1,22 +1,22 @@
 import React from 'react';
-import { deletePhonebookItem } from '../services/phonebookApi';
-import { usePhonebookContext } from '../context/PhonebookContext';
+import { useDispatch } from 'react-redux';
+import { deletePhonebook } from '../features/phonebook/phonebookThunks';
+import { closeDeleteModal } from '../features/phonebook/phonebookSlice';
 
 export const PhonebookDelete = ({ id, name }) => {
-  const { dispatch } = usePhonebookContext();
+  const dispatch = useDispatch();
 
-  const handleDeleteClick = async () => {
+  const handleDeleteClick = () => {
     try {
-      await deletePhonebookItem(id);
-      dispatch({ type: 'REMOVE_ITEM', payload: { id } });
-      dispatch({ type: 'CLOSE_DELETE_MODAL' });
+      dispatch(deletePhonebook(id));
+      dispatch(closeDeleteModal());
     } catch (error) {
       console.error('Error deleting phonebook:', error.code);
     }
   };
 
   const handleCloseClick = () => {
-    dispatch({ type: 'CLOSE_DELETE_MODAL' });
+    dispatch(closeDeleteModal());
   };
 
   return (

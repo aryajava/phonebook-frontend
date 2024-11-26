@@ -1,8 +1,11 @@
+// src/App.js
+import React from 'react';
+import { Provider } from 'react-redux';
+import { store } from './app/store';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { IndexPhonebook } from './routes/IndexPhonebook';
 import { FormPhonebook } from './routes/FormPhonebook';
 import ErrorPage from './routes/ErrorPage';
-import { PhonebookProvider } from './context/PhonebookContext';
 import './styles/App.css';
 
 const routes = createBrowserRouter([
@@ -25,15 +28,14 @@ const routes = createBrowserRouter([
       v7_partialHydration: true,
       v7_skipActionErrorRevalidation: true
     }
-  }
-);
+  });
 
 const App = () => {
   return (
-    <PhonebookProvider>
+    <Provider store={store}>
       <RouterProvider router={routes} future={{ v7_startTransition: true, v7_relativeSplatPath: true }} />
-    </PhonebookProvider>
+    </Provider>
   );
-}
+};
 
 export default App;
