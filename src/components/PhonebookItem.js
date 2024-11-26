@@ -6,7 +6,7 @@ import { usePhonebookContext } from '../context/PhonebookContext';
 
 export const PhonebookItem = (props) => {
   const { id, name, phone, avatar } = props;
-  const { dispatch } = usePhonebookContext();
+  const { state, dispatch } = usePhonebookContext();
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(name);
   const [editedPhone, setEditedPhone] = useState(phone);
@@ -25,6 +25,7 @@ export const PhonebookItem = (props) => {
         phone: editedPhone,
       });
       dispatch({ type: 'UPDATE_ITEM', payload: { id, updatedItem: data } });
+      dispatch({ type: 'RESET', payload: { keyword: state.searchKeyword, order: state.sortOrder } });
     } catch (error) {
       console.error('Error updating phonebook:', error.code);
       setAlertMessage(error.response.data.error + '!');
