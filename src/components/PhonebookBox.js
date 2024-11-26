@@ -71,20 +71,10 @@ export const PhonebookBox = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.searchKeyword, state.sortOrder]);
 
-  const showDeleteModal = (item) => {
-    dispatch({
-      type: 'SHOW_DELETE_MODAL',
-      payload: item,
-    });
-  };
-
   return (
     <>
       <PhonebookTopBar />
-      <PhonebookList
-        phonebookItems={state.phonebookItems}
-        showDeleteModal={showDeleteModal}
-      />
+      <PhonebookList />
       {state.isFetching &&
         <div className='row justify-content-center p-3'>
           <FontAwesomeIcon icon={faSpinner} spin size='2x' />

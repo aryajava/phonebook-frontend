@@ -1,15 +1,14 @@
 import React from 'react';
 import { PhonebookItem } from './PhonebookItem';
-
-// export const PhonebookList = ({ phonebookItems, updatePhonebookItem, removePhonebookItem, showDeleteModal }) => {
-export const PhonebookList = ({ phonebookItems, showDeleteModal }) => {
+import { usePhonebookContext } from '../context/PhonebookContext';
+export const PhonebookList = () => {
+  const { state } = usePhonebookContext();
   return (
     <div className='row justify-content-center' id='phonebookList'>
-      {phonebookItems.map((item) => (
+      {state.phonebookItems.map((item) => (
         <PhonebookItem
           key={item.id}
           {...item}
-          showDeleteModal={showDeleteModal}
         />
       ))}
     </div>

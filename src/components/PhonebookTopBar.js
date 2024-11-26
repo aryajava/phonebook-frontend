@@ -32,7 +32,7 @@ export const PhonebookTopBar = () => {
   return (
     <div className='nav sticky-top justify-content-between'>
       <button className='btn btn-brown p-3 mr-3' id='sortPhonebook' onClick={handleSortClick}>
-        <FontAwesomeIcon icon={state.sortOrder === 'asc' ? faArrowDownAZ : faArrowUpAZ} />
+        <FontAwesomeIcon icon={state.sortOrder === 'asc' ? faArrowUpAZ : faArrowDownAZ} />
       </button>
       <div className='flex-fill'>
         <div className='input-group'>
