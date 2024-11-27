@@ -28,6 +28,7 @@ export const fetchPhonebooks = async (page, keyword = '', sort = 'asc') => {
 
 // get avatar image
 export const getAvatar = (id, avatar) => {
+  if (!avatar) return `${getBaseURL()}/images/defaultAvatar.png`;
   return `${getBaseURL()}/images/${id}/${avatar}`;
 };
 
