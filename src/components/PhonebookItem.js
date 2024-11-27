@@ -42,7 +42,6 @@ export const PhonebookItem = (props) => {
     if (file) {
       const formData = new FormData();
       formData.append('avatar', file);
-
       try {
         const response = await request.put(`${id}/avatar`, formData, {
           headers: {

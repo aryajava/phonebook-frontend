@@ -77,10 +77,13 @@ export const PhonebookBox = () => {
     setIsDeleteModalVisible(false);
   };
 
-  const updatePhonebookItem = (id, updatedItem) => {
+  const updatePhonebookItem = async (id, updatedItem) => {
     setPhonebookItems((prevItems) =>
       prevItems.map((item) => (item.id === id ? updatedItem : item))
     );
+    setPage(1);
+    setPhonebookItems([]);
+    await fetchData(page, searchKeyword, sortOrder);
   };
 
   const removePhonebookItem = (id) => {
