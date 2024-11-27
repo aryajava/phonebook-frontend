@@ -33,13 +33,12 @@ export const PhonebookAdd = () => {
   return (
     <>
       {showAlert && (
-        <div className='alert mt-3' id='alert' role='alert'>
+        <div className='alert' id='alert' role='alert'>
           <button className='close-btn' onClick={closeAlert}>x</button>
           <p id='alertMessage'>{alertMessage}</p>
         </div>
       )}
-
-      <div className="row my-2">
+      <div className='form-group'>
         <input
           type="text"
           className="form-control"
@@ -52,8 +51,6 @@ export const PhonebookAdd = () => {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-      </div>
-      <div className="row my-2">
         <input
           type="text"
           className="form-control"
@@ -66,7 +63,7 @@ export const PhonebookAdd = () => {
           onChange={(e) => setPhone(e.target.value)}
         />
       </div>
-      <div className="row my-2">
+      <div className='button-group'>
         <button type="button" id='saveData' className="col btn btn-brown mr-3" onClick={handleSave}>Save</button>
         <button type="button" onClick={handleCancel} className="col btn btn-brown ml-3">Cancel</button>
       </div>

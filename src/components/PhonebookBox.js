@@ -57,7 +57,7 @@ export const PhonebookBox = () => {
       }
     }, 500);
 
-    observer.current = new IntersectionObserver(handleObserver, { threshold: 0.5, rootMargin: '0px 0px 100px 0px' });
+    observer.current = new IntersectionObserver(handleObserver, { threshold: 1, rootMargin: '0px 0px 100px 0px' });
     if (lastPhonebookElementRef.current) {
       observer.current.observe(lastPhonebookElementRef.current);
     }
@@ -109,7 +109,7 @@ export const PhonebookBox = () => {
         showDeleteModal={showDeleteModal}
       />
       {isFetching &&
-        <div className='row justify-content-center p-3'>
+        <div className='loading'>
           <FontAwesomeIcon icon={faSpinner} spin size='2x' />
         </div>
       }

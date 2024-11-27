@@ -33,26 +33,24 @@ export const PhonebookTopBar = ({ setSearchKeyword, setSortOrder }) => {
   };
 
   return (
-    <div className='nav sticky-top justify-content-between'>
-      <button className='btn btn-brown p-3 mr-3' id='sortPhonebook' onClick={handleSortClick}>
+    <div className='nav sticky-top'>
+      <button className='btn-brown' id='sortPhonebook' onClick={handleSortClick}>
         <FontAwesomeIcon icon={sortOrder === 'asc' ? faArrowUpAZ : faArrowDownAZ} />
       </button>
-      <div className='flex-fill'>
-        <div className='input-group'>
-          <span className='input-group-text'>
-            <FontAwesomeIcon icon={faSearch} />
-          </span>
-          <input
-            type='text'
-            className='form-control'
-            id='searchPhonebook'
-            placeholder='Search...'
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-        </div>
+      <div className='input-group'>
+        <span className='input-group-prepend'>
+          <FontAwesomeIcon icon={faSearch} />
+        </span>
+        <input
+          type='text'
+          className='form-control'
+          id='searchPhonebook'
+          placeholder='Search...'
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
       </div>
-      <button type='button' onClick={handleFormAdd} className='btn btn-brown p-3 ml-3' id='addPhonebook'>
+      <button type='button' onClick={handleFormAdd} className='btn-brown' id='addPhonebook'>
         <FontAwesomeIcon icon={faUserPlus} />
       </button>
     </div>

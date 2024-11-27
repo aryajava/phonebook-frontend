@@ -57,55 +57,54 @@ export const PhonebookItem = (props) => {
     }
   };
 
-  const avatarUrl = `${getBaseURL()}/images/${id}/${avatar}`;
+  let avatarUrl = `${getBaseURL()}/images/${id}/${avatar}`;
+  if (!avatar) {
+    avatarUrl = `${getBaseURL()}/images/defaultAvatar.png`;
+  }
 
   return (
-    <div className='col-xl-3 col-md-4 col-12'>
+    <>
       <div className='card'>
         {showAlert && (
-          <div className='alert mb-3' id='alert' role='alert'>
+          <div className='alert' id='alert' role='alert'>
             <button className='close-btn' onClick={closeAlert}>x</button>
             <p id='alertMessage'>{alertMessage}</p>
           </div>
         )}
         <div className='card-body'>
-          <div className='row'>
-            <div className='col-5 pr-3 justify-content-center'>
-              <img src={avatarUrl} alt={name} onClick={handleImageClick} style={{ cursor: 'pointer' }} />
-              <input
-                type='file'
-                ref={fileInputRef}
-                style={{ position: 'absolute', width: '1px', height: '1px', opacity: 0, overflow: 'hidden', border: 0, padding: 0, margin: '-1px' }}
-                aria-hidden='true'
-                onChange={handleFileChange}
-              />
-            </div>
-            <div className='col-7'>
-              {isEditing ? (
-                <>
-                  <input type='text' value={editedName} onChange={(e) => setEditedName(e.target.value)} className='form-control-item mb-1' />
-                  <input type='text' value={editedPhone} onChange={(e) => setEditedPhone(e.target.value)} className='form-control-item mb-1' />
-                </>
-              ) : (
-                <>
-                  <p className='card-item-text p-1'>{name}</p>
-                  <p className='card-item-text p-1'>{phone}</p>
-                </>
-              )}
-              <div className='row'>
-                <button type='button' onClick={isEditing ? handleSaveClick : handleEditClick} className='m-0 btn btn-card p-2'>
-                  <FontAwesomeIcon icon={isEditing ? faSave : faPenToSquare} width={14} />
+          <img src={avatarUrl} alt={name} onClick={handleImageClick} className='avatar' />
+          <input
+            type='file'
+            ref={fileInputRef}
+            style={{ position: 'absolute', width: '1px', height: '1px', opacity: 0, overflow: 'hidden', border: 0, padding: 0, margin: '-1px' }}
+            aria-hidden='true'
+            onChange={handleFileChange}
+          />
+          <div className='card-content'>
+            {isEditing ? (
+              <>
+                <input type='text' value={editedName} onChange={(e) => setEditedName(e.target.value)} className='form-control' />
+                <input type='text' value={editedPhone} onChange={(e) => setEditedPhone(e.target.value)} className='form-control' />
+              </>
+            ) : (
+              <>
+                <p className='card-text'>{name}</p>
+                <p className='card-text'>{phone}</p>
+              </>
+            )}
+            <div className='button-group'>
+              <button type='button' onClick={isEditing ? handleSaveClick : handleEditClick} className='btn-action'>
+                <FontAwesomeIcon icon={isEditing ? faSave : faPenToSquare} width={14} />
+              </button>
+              {!isEditing && (
+                <button onClick={() => showDeleteModal({ id, name })} className='btn-action' >
+                  <FontAwesomeIcon icon={faTrash} width={14} />
                 </button>
-                {!isEditing && (
-                  <button onClick={() => showDeleteModal({ id, name })} className='m-0 btn btn-card p-2' >
-                    <FontAwesomeIcon icon={faTrash} width={14} />
-                  </button>
-                )}
-              </div>
+              )}
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };

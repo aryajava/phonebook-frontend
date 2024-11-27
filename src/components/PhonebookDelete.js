@@ -26,8 +26,8 @@ export const PhonebookDelete = (props) => {
             <p>Apakah kamu yakin akan menghapus data: '{name}'?</p>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-brown px-3 py-2 mx-2" onClick={closeDeleteModal}>No</button>
-            <button type="button" className="btn btn-brown px-3 py-2 mx-2" onClick={handleDeleteClick}>Yes</button>
+            <button type="button" className="btn-brown" onClick={closeDeleteModal}>No</button>
+            <button type="button" className="btn-brown" onClick={handleDeleteClick}>Yes</button>
           </div>
         </div>
       </div>
