@@ -6,7 +6,6 @@ export const fetchPhonebookItems = createAsyncThunk(
   'phonebook/fetchPhonebookItems',
   async ({ page, keyword, sort }, { dispatch }) => {
     const response = await fetchPhonebooks(page, keyword, sort);
-    console.log('Fetched data:', response); // Tambahkan ini untuk memeriksa data
     dispatch(setItems({ phonebooks: response.phonebooks, page }));
     return response.pages > response.page;
   }
