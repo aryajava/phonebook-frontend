@@ -1,3 +1,4 @@
+// src/app/store.js
 import { configureStore } from '@reduxjs/toolkit';
 import phonebookReducer from '../features/phonebook/phonebookSlice';
 

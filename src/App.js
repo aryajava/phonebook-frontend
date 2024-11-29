@@ -15,7 +15,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={< PhonebookApp />} errorElement={< ErrorPage />} />
           <Route path="/add" element={<AddContact />} errorElement={< ErrorPage />} />
-          <Route path="/*" element={<NotFoundPage />} />
+          <Route path="/*" element={<NotFoundPage />} errorElement={< ErrorPage />} />
         </Routes>
       </BrowserRouter>
     </Provider>
