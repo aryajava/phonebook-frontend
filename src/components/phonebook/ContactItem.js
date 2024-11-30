@@ -5,6 +5,7 @@ import { DeleteContact } from './DeleteContact';
 
 export const ContactItem = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleEdit = (e) => {
     e.preventDefault();
@@ -14,14 +15,16 @@ export const ContactItem = () => {
 
   const handleEditSave = (e) => {
     e.preventDefault();
-    console.log(`Save the changes`);
     setIsEditing(false);
   };
 
   const handleShowModal = (e) => {
     e.preventDefault();
-    console.log(`Show the modal`);
-    <DeleteContact show={true} />
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   return (
@@ -54,6 +57,7 @@ export const ContactItem = () => {
           </div>
         </div>
       </div>
+      {showModal && <DeleteContact show={showModal} onClose={handleCloseModal} />}
     </>
   );
 };

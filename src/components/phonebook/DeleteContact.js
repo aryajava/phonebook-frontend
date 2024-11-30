@@ -1,13 +1,13 @@
 import React from 'react';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const DeleteContact = (props) => {
-  console.log(`DeleteContact props:`, props);
+  const { show, onClose } = props;
 
-  const { show } = props;
   const handleClose = (e) => {
     e.preventDefault();
-    console.log(`Close the modal`);
-    show(false);
+    onClose();
   };
 
   const handleDelete = (e) => {
@@ -20,11 +20,13 @@ export const DeleteContact = (props) => {
       <div className={show ? `modal show` : `modal`}>
         <div className='modal-content'>
           <div className='modal-header'>
-            <h3>Delete Contact</h3>
-            <button type='button' onClick={handleClose}>X</button>
+            <p>Delete Contact</p>
+            <span className='close' onClick={handleClose}>
+              <FontAwesomeIcon icon={faTimes} />
+            </span>
           </div>
           <div className='modal-body'>
-            <p>Are you sure you want to delete this contact?</p>
+            <p>Are you sure you want to delete contact "{"aa"}"?</p>
           </div>
           <div className='modal-footer'>
             <button type='button' className='btn-brown' onClick={handleDelete}>Delete</button>
