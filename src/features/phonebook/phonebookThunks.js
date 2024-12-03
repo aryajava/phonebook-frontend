@@ -4,7 +4,7 @@ import { setContacts, addContact, editContact, removeContact } from './phonebook
 
 export const getPhonebooksAsync = createAsyncThunk(
   'phonebook/getPhonebooks',
-  async ({ page, keyword, sort }, { dispatch }) => {
+  async ({ page = 1, keyword = '', sort = 'asc' }, { dispatch }) => {
     const response = await getPhonebooks(page, keyword, sort);
     dispatch(setContacts({ phonebooks: response.data, page }));
     return response.data;

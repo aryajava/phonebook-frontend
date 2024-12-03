@@ -2,19 +2,24 @@ import React, { useState } from 'react';
 import { faPenToSquare, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DeleteContact } from './DeleteContact';
+import { useDispatch } from 'react-redux';
+import { deleteContactAsync, editContactAsync } from './phonebookThunks';
 
-export const ContactItem = () => {
+export const ContactItem = ({ contact }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [name, setName] = useState(contact.name);
+  const [phone, setPhone] = useState(contact.phone);
+  const dispatch = useDispatch();
 
   const handleEdit = (e) => {
     e.preventDefault();
-    console.log(`Edit the contact`);
     setIsEditing(true);
   };
 
   const handleEditSave = (e) => {
     e.preventDefault();
+    dispatch(editContactAsync({ id: contact.id, name, phone }));
     setIsEditing(false);
   };
 
@@ -27,26 +32,31 @@ export const ContactItem = () => {
     setShowModal(false);
   };
 
+  const handleDelete = () => {
+    dispatch(deleteContactAsync(contact.id));
+    setShowModal(false);
+  };
+
   return (
     <>
       <div className='card'>
         <div className='card-body'>
           <div id='contact-avatar'>
-            <img src='https://www.shutterstock.com/shutterstock/photos/1095249842/display_1500/stock-vector-blank-avatar-photo-place-holder-1095249842.jpg' alt='John Doe' />
+            <img src={contact.avatar} alt={contact.name} />
           </div>
           <div id='contact-info'>
             {
               isEditing ?
                 (
                   <>
-                    <input type='text' id='name' placeholder='Name' defaultValue={'John Doe'} />
-                    <input type='text' id='phone' placeholder='Phone' defaultValue={'123-456-7890'} />
+                    <input type='text' id='name' placeholder='Name' value={name} onChange={(e) => setName(e.target.value)} />
+                    <input type='text' id='phone' placeholder='Phone' value={phone} onChange={(e) => setPhone(e.target.value)} />
                   </>
                 ) :
                 (
                   <>
-                    <p id='name'>John Doe</p>
-                    <p id='phone'>123-456-7890</p>
+                    <p id='name'>{contact.name}</p>
+                    <p id='phone'>{contact.phone}</p>
                   </>
                 )
             }
@@ -57,7 +67,7 @@ export const ContactItem = () => {
           </div>
         </div>
       </div>
-      {showModal && <DeleteContact show={showModal} onClose={handleCloseModal} />}
+      {showModal && <DeleteContact show={showModal} onClose={handleCloseModal} onDelete={handleDelete} />}
     </>
   );
 };

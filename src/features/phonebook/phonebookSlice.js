@@ -68,10 +68,16 @@ const phonebookSlice = createSlice({
       })
       .addCase(getPhonebooksAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.contacts = action.payload.map(contact => {
-          contact.avatar = getAvatarContact(contact.id, contact.avatar);
-          return contact;
-        });
+        if (Array.isArray(action.payload.phonebooks)) {
+          state.contacts = action.payload.phonebooks.map(contact => {
+            return {
+              ...contact,
+              avatar: getAvatarContact(contact.id, contact.avatar)
+            };
+          });
+        } else {
+          console.error('Expected an array but got:', action.payload);
+        }
       })
       .addCase(addContactAsync.pending, (state) => {
         state.status = 'loading';
@@ -87,8 +93,10 @@ const phonebookSlice = createSlice({
         state.status = 'idle';
         state.contacts = state.contacts.map(contact => {
           if (contact.id === action.payload.id) {
-            contact.avatar = getAvatarContact(contact.id, contact.avatar);
-            return action.payload;
+            return {
+              ...action.payload,
+              avatar: getAvatarContact(contact.id, contact.avatar)
+            };
           }
           return contact;
         });
