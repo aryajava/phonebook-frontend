@@ -16,10 +16,10 @@ export const getAvatarContact = (id, avatar) => {
 };
 
 // add a new contact
-export const addContact = (data) => request.post('', data);
+export const createContact = (contact) => request.post('', contact);
 
 // edit a contact
-export const editContact = (id, data) => request.put(id.toString(), data);
+export const updateContact = (id, data) => request.put(id.toString(), data);
 
 // update avatar contact
 export const updateAvatarContact = async (id, data) => request.put(`${id}/avatar`, data, { headers: { 'Content-Type': 'multipart/form-data' } });

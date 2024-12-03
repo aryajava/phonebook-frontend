@@ -1,37 +1,39 @@
-// src/features/phonebook/phonebookThunks.js
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchPhonebooks, addPhonebook, updatePhonebook, deletePhonebookItem } from '../../services/phonebookApi';
-import { setItems, addItem, updateItem, removeItem } from './phonebookSlice';
+import { getPhonebooks, createContact, updateContact, deleteContact } from './api/phonebookApi';
+import { setContacts, addContact, editContact, removeContact } from './phonebookSlice';
 
-export const fetchPhonebookItems = createAsyncThunk(
-  'phonebook/fetchPhonebookItems',
+export const getPhonebooksAsync = createAsyncThunk(
+  'phonebook/getPhonebooks',
   async ({ page, keyword, sort }, { dispatch }) => {
-    const response = await fetchPhonebooks(page, keyword, sort);
-    dispatch(setItems({ phonebooks: response.phonebooks, page }));
-    return response.pages > response.page;
+    const response = await getPhonebooks(page, keyword, sort);
+    dispatch(setContacts({ phonebooks: response.data, page }));
+    return response.data;
   }
 );
 
-export const addNewPhonebook = createAsyncThunk(
-  'phonebook/addNewPhonebook',
+export const addContactAsync = createAsyncThunk(
+  'phonebook/addContact',
   async (data, { dispatch }) => {
-    const response = await addPhonebook(data);
-    dispatch(addItem(response));
+    const response = await createContact(data);
+    dispatch(addContact(response.data));
+    return response.data;
   }
 );
 
-export const updatePhonebookItem = createAsyncThunk(
-  'phonebook/updatePhonebookItem',
+export const editContactAsync = createAsyncThunk(
+  'phonebook/editContact',
   async ({ id, data }, { dispatch }) => {
-    const response = await updatePhonebook(id, data);
-    dispatch(updateItem({ id, updatedItem: response }));
+    const response = await updateContact(id, data);
+    dispatch(editContact({ id, updatedItem: response.data }));
+    return response.data;
   }
 );
 
-export const deletePhonebook = createAsyncThunk(
-  'phonebook/deletePhonebook',
+export const deleteContactAsync = createAsyncThunk(
+  'phonebook/deleteContact',
   async (id, { dispatch }) => {
-    await deletePhonebookItem(id);
-    dispatch(removeItem({ id }));
+    await deleteContact(id);
+    dispatch(removeContact({ id }));
+    return id;
   }
 );
