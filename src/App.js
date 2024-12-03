@@ -4,8 +4,8 @@ import { Provider } from 'react-redux';
 import { store } from './app/store';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ErrorPage, NotFoundPage } from './components/Error';
-import { PhonebookApp } from './components/phonebook/PhonebookApp';
-import { AddContact } from './components/phonebook/AddContact';
+import { PhonebookApp } from './features/phonebook/PhonebookApp';
+import { AddContact } from './features/phonebook/AddContact';
 import './styles/App.css';
 
 const App = () => {
