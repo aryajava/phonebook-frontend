@@ -1,25 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { addContactAsync } from './phonebookThunks';
 
 export const AddContact = () => {
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleSave = (e) => {
     e.preventDefault();
-    console.log(`Save the contact`);
+    dispatch(addContactAsync({ name, phone }));
     navigate('/');
   };
 
   const handleCancel = (e) => {
     e.preventDefault();
-    console.log(`Cancel the contact`);
     navigate('/');
   };
   return (
     <>
       <div className='form'>
-        <input type='text' id='name' placeholder='Name' />
-        <input type='text' id='phone' placeholder='Phone' />
+        <input type='text' id='name' placeholder='Name' value={name} onChange={(e) => setName(e.target.value)} />
+        <input type='text' id='phone' placeholder='Phone' value={phone} onChange={(e) => setPhone(e.target.value)} />
         <div className='form-action'>
           <button type='button' className='btn-brown' onClick={handleSave}>Save</button>
           <button type='button' className='btn-brown' onClick={handleCancel}>Cancel</button>
