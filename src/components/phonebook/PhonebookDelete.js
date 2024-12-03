@@ -1,6 +1,6 @@
 import React from 'react';
-import { deletePhonebookItem } from '../services/phonebookApi';
-import { usePhonebookContext } from '../context/PhonebookContext';
+import { deletePhonebookItem } from '../../services/phonebookApi';
+import { usePhonebookContext } from '../../context/PhonebookContext';
 
 export const PhonebookDelete = (props) => {
   const { id, name } = props;

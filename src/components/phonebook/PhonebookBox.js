@@ -2,10 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import { throttle } from 'lodash';
 import { PhonebookList } from './PhonebookList';
 import { PhonebookTopBar } from './PhonebookTopBar';
-import { usePhonebookContext } from '../context/PhonebookContext';
+import { usePhonebookContext } from '../../context/PhonebookContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { fetchPhonebooks } from '../services/phonebookApi';
+import { fetchPhonebooks } from '../../services/phonebookApi';
 import { PhonebookDelete } from './PhonebookDelete';
 
 export const PhonebookBox = () => {

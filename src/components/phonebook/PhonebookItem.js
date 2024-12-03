@@ -1,8 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash, faSave } from '@fortawesome/free-solid-svg-icons';
 import React, { useState, useRef } from 'react';
-import { getAvatar, updatePhonebook, updateAvatar } from '../services/phonebookApi';
-import { usePhonebookContext } from '../context/PhonebookContext';
+import { getAvatar, updatePhonebook, updateAvatar } from '../../services/phonebookApi';
+import { usePhonebookContext } from '../../context/PhonebookContext';
 
 export const PhonebookItem = (props) => {
   const { id, name, phone, avatar } = props;

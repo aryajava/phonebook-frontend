@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePhonebookContext } from '../context/PhonebookContext';
-import { addPhonebook } from '../services/phonebookApi';
+import { usePhonebookContext } from '../../context/PhonebookContext';
+import { addPhonebook } from '../../services/phonebookApi';
 
 export const PhonebookAdd = () => {
   const { dispatch } = usePhonebookContext();

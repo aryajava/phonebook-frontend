@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus, faArrowDownAZ, faArrowUpAZ, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { debounce } from 'lodash';
 import { useNavigate } from 'react-router-dom';
-import { usePhonebookContext } from '../context/PhonebookContext';
+import { usePhonebookContext } from '../../context/PhonebookContext';
 
 export const PhonebookTopBar = () => {
   const { state, dispatch } = usePhonebookContext();
