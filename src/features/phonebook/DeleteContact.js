@@ -2,7 +2,8 @@ import React from 'react';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export const DeleteContact = ({ show, onClose, onDelete }) => {
+export const DeleteContact = ({ show, onClose, onDelete, data }) => {
+
   const handleClose = (e) => {
     e.preventDefault();
     onClose();
@@ -25,10 +26,19 @@ export const DeleteContact = ({ show, onClose, onDelete }) => {
           </div>
           <div className='modal-body'>
             <p>Are you sure you want to delete this contact?</p>
+            <div className='contact-info'>
+              <div className='avatar'>
+                <img src={data.avatar} alt={data.name} />
+              </div>
+              <div className='contact-detail'>
+                <p>Name: {data.name}</p>
+                <p>Phone: {data.phone}</p>
+              </div>
+            </div>
           </div>
           <div className='modal-footer'>
-            <button type='button' className='btn-brown' onClick={handleDelete}>Delete</button>
             <button type='button' className='btn-brown' onClick={handleClose}>Cancel</button>
+            <button type='button' className='btn-brown' onClick={handleDelete}>Delete</button>
           </div>
         </div>
       </div>

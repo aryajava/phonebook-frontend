@@ -1,30 +1,61 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { getPhonebooksAsync, addContactAsync, editContactAsync, deleteContactAsync } from './phonebookThunks';
-import { getAvatarContact } from './api/phonebookApi';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createContact, deleteContact, getAvatarContact, getContacts, updateContact } from './api/phonebookApi';
 
 const initialState = {
   contacts: [],
-  isFetching: false,
+  // isFetching: false,
   searchKeyword: '',
   sortOrder: 'asc',
   page: 1,
-  isEditModalVisible: false,
-  isDeleteModalVisible: false,
-  contactToDelete: null,
   status: 'idle',
 };
 
-const phonebookSlice = createSlice({
+export const getContactsAsync = createAsyncThunk(
+  'phonebook/getContacts',
+  async ({ page = 1, keyword = '', sort = 'asc' }) => {
+    const response = await getContacts(page, keyword, sort);
+    return { data: response.data, page, keyword, sort };
+  }
+);
+
+export const addContactAsync = createAsyncThunk(
+  'phonebook/addContact',
+  async (data) => {
+    const response = await createContact(data);
+    return response.data;
+  }
+);
+
+export const editContactAsync = createAsyncThunk(
+  'phonebook/editContact',
+  async ({ id, data }) => {
+    const response = await updateContact(id, data);
+    return response.data;
+  }
+);
+
+export const deleteContactAsync = createAsyncThunk(
+  'phonebook/deleteContact',
+  async (id) => {
+    await deleteContact(id);
+    return id;
+  }
+);
+
+export const updateAvatarContactAsync = createAsyncThunk(
+  'phonebook/updateAvatarContact',
+  async ({ id, avatar }) => {
+    await updateContact(id, { avatar });
+    return { id, avatar };
+  }
+);
+
+export const phonebookSlice = createSlice({
   name: 'phonebook',
   initialState,
   reducers: {
     setContacts: (state, action) => {
-      state.contacts = action.payload.page === 1 ?
-        action.payload.phonebooks :
-        [...state.contacts, ...action.payload.phonebooks];
-    },
-    setFetching: (state, action) => {
-      state.isFetching = action.payload;
+      state.contacts = action.payload.phonebooks;
     },
     setPage: (state, action) => {
       state.page = action.payload;
@@ -35,27 +66,15 @@ const phonebookSlice = createSlice({
     setSortOrder: (state, action) => {
       state.sortOrder = action.payload;
     },
-    reset: (state, action) => {
-      state.contacts = [];
-      state.page = 1;
-      state.searchKeyword = action.payload.keyword;
-      state.sortOrder = action.payload.order;
-    },
     addContact: (state, action) => {
       state.contacts = [action.payload, ...state.contacts];
     },
     editContact: (state, action) => {
-      state.contacts = state.contacts.map((item) =>
-        item.id === action.payload.id ? action.payload.updatedItem : item
-      );
-    },
-    showDeleteModal: (state, action) => {
-      state.isDeleteModalVisible = true;
-      state.contactToDelete = action.payload;
-    },
-    closeDeleteModal: (state) => {
-      state.isDeleteModalVisible = false;
-      state.contactToDelete = null;
+      const { id, data } = action.payload;
+      const index = state.contacts.findIndex(contact => contact.id === id);
+      if (index !== -1) {
+        state.contacts[index] = { ...state.contacts[index], ...data };
+      }
     },
     removeContact: (state, action) => {
       state.contacts = state.contacts.filter(item => item.id !== action.payload.id);
@@ -63,20 +82,23 @@ const phonebookSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getPhonebooksAsync.pending, (state) => {
+      .addCase(getContactsAsync.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(getPhonebooksAsync.fulfilled, (state, action) => {
+      .addCase(getContactsAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        if (Array.isArray(action.payload.phonebooks)) {
-          state.contacts = action.payload.phonebooks.map(contact => {
+        state.page = action.payload.page;
+        state.searchKeyword = action.payload.keyword;
+        state.sortOrder = action.payload.sort;
+        if (Array.isArray(action.payload.data.phonebooks)) {
+          state.contacts = action.payload.data.phonebooks.map(contact => {
             return {
               ...contact,
               avatar: getAvatarContact(contact.id, contact.avatar)
             };
           });
         } else {
-          console.error('Expected an array but got:', action.payload);
+          console.error('Expected an array but got:', action.payload.data);
         }
       })
       .addCase(addContactAsync.pending, (state) => {
@@ -84,7 +106,7 @@ const phonebookSlice = createSlice({
       })
       .addCase(addContactAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.contacts = [action.payload, ...state.contacts];
+        state.contacts = action.payload;
       })
       .addCase(editContactAsync.pending, (state) => {
         state.status = 'loading';
@@ -113,16 +135,35 @@ const phonebookSlice = createSlice({
 
 export const {
   setContacts,
-  setFetching,
   setPage,
   setSearchKeyword,
   setSortOrder,
-  reset,
   addContact,
   editContact,
-  showDeleteModal,
-  closeDeleteModal,
   removeContact,
 } = phonebookSlice.actions;
+
+export const addContacts = (data) => async (dispatch) => {
+  dispatch(addContact(data));
+  dispatch(addContactAsync(data));
+};
+
+export const editContacts = (data) => async (dispatch, getState) => {
+  const state = getState();
+  const currentKeyword = state.phonebook.searchKeyword;
+  const currentSortOrder = state.phonebook.sortOrder;
+  dispatch(editContact(data));
+  await dispatch(editContactAsync(data));
+  dispatch(getContactsAsync({ page: 1, keyword: currentKeyword, sort: currentSortOrder }));
+};
+
+export const deleteContacts = (id) => async (dispatch, getState) => {
+  const state = getState();
+  const currentKeyword = state.phonebook.searchKeyword;
+  const currentSortOrder = state.phonebook.sortOrder;
+  dispatch(removeContact(id));
+  await dispatch(deleteContactAsync(id));
+  dispatch(getContactsAsync({ page: 1, keyword: currentKeyword, sort: currentSortOrder }));
+};
 
 export default phonebookSlice.reducer;

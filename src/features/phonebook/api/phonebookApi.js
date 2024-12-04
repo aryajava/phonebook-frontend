@@ -1,7 +1,7 @@
 import { getBaseURL, request } from "../../../services/api";
 
 // get phonebooks with pagination, search, and sorting
-export const getPhonebooks = (page, keyword = '', sort = 'asc') => {
+export const getContacts = (page, keyword = '', sort = 'asc') => {
   const params = new URLSearchParams();
   params.append('page', page);
   if (keyword) params.append('keyword', keyword);

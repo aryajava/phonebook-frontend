@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { faPenToSquare, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DeleteContact } from './DeleteContact';
-import { useDispatch } from 'react-redux';
-import { deleteContactAsync, editContactAsync } from './phonebookThunks';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteContacts, editContacts } from './phonebookSlice';
 
 export const ContactItem = ({ contact }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -11,6 +11,9 @@ export const ContactItem = ({ contact }) => {
   const [name, setName] = useState(contact.name);
   const [phone, setPhone] = useState(contact.phone);
   const dispatch = useDispatch();
+  const keyword = useSelector((state) => state.phonebook.searchKeyword);
+  const sort = useSelector((state) => state.phonebook.sortOrder);
+  const fileInputRef = useRef(null);
 
   const handleEdit = (e) => {
     e.preventDefault();
@@ -20,9 +23,19 @@ export const ContactItem = ({ contact }) => {
   const handleEditSave = (e) => {
     e.preventDefault();
     const data = { name, phone };
-    dispatch(editContactAsync({ id: contact.id, data }));
     setIsEditing(false);
+    dispatch(editContacts({ id: contact.id, data }));
   };
+
+  const handleImageClick = () => {
+    fileInputRef.current.click();
+  }
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    console.log(`File: ${file}`);
+
+  }
 
   const handleShowModal = (e) => {
     e.preventDefault();
@@ -34,7 +47,7 @@ export const ContactItem = ({ contact }) => {
   };
 
   const handleDelete = () => {
-    dispatch(deleteContactAsync(contact.id));
+    dispatch(deleteContacts(contact.id));
     setShowModal(false);
   };
 
@@ -43,7 +56,14 @@ export const ContactItem = ({ contact }) => {
       <div className='card'>
         <div className='card-body'>
           <div id='contact-avatar'>
-            <img src={contact.avatar} alt={contact.name} />
+            <img src={contact.avatar} alt={contact.name} onClick={handleImageClick} />
+            <input
+              type='file'
+              ref={fileInputRef}
+              style={{ position: 'absolute', width: '1px', height: '1px', opacity: 0, overflow: 'hidden', border: 0, padding: 0, margin: '-1px' }}
+              aria-hidden='true'
+              onChange={handleFileChange}
+            />
           </div>
           <div id='contact-info'>
             {
@@ -68,7 +88,7 @@ export const ContactItem = ({ contact }) => {
           </div>
         </div>
       </div>
-      {showModal && <DeleteContact show={showModal} onClose={handleCloseModal} onDelete={handleDelete} />}
+      {showModal && <DeleteContact show={showModal} onClose={handleCloseModal} onDelete={handleDelete} data={contact} />}
     </>
   );
 };

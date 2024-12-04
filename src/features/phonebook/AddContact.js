@@ -1,24 +1,30 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { addContactAsync } from './phonebookThunks';
+import { addContacts, setContacts } from './phonebookSlice';
 
 export const AddContact = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const keyword = useSelector((state) => state.phonebook.searchKeyword);
+  const sort = useSelector((state) => state.phonebook.sortOrder);
 
   const handleSave = (e) => {
     e.preventDefault();
-    dispatch(addContactAsync({ name, phone }));
+    dispatch(addContacts({ name, phone })).then(() => {
+      dispatch(setContacts({ page: 1, keyword, sort }));
+    });
     navigate('/');
   };
 
   const handleCancel = (e) => {
     e.preventDefault();
+    dispatch(setContacts({ page: 1, keyword, sort }));
     navigate('/');
   };
+
   return (
     <>
       <div className='form'>
