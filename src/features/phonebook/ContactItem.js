@@ -31,8 +31,8 @@ export const ContactItem = ({ contact }) => {
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
-    console.log(`File: ${file}`);
-
+    console.log(`File: ${JSON.stringify(e.target.files)}`);
+    console.log(`File: ${JSON.stringify(file)}`);
   }
 
   const handleShowModal = (e) => {
@@ -58,7 +58,6 @@ export const ContactItem = ({ contact }) => {
             <input
               type='file'
               ref={fileInputRef}
-              style={{ position: 'absolute', width: '1px', height: '1px', opacity: 0, overflow: 'hidden', border: 0, padding: 0, margin: '-1px' }}
               aria-hidden='true'
               onChange={handleFileChange}
             />

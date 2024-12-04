@@ -27,6 +27,7 @@ button {
   background-color: #b6802f;
   border: 1px solid #b6802f;
   border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
 .form-group {
@@ -35,6 +36,7 @@ button {
   align-items: center;
   border: 1px solid #000;
   border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
 .form-group input {
@@ -64,6 +66,7 @@ button {
 .card {
   background-color: #ccc;
   border: 1px solid #000;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   border-radius: 5px;
   width: 250px;
 }
@@ -78,10 +81,23 @@ button {
 .card-body #contact-avatar img {
   width: 95px;
   height: 95px;
-  border: 1px solid #eee;
+  margin: .2rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   object-fit: cover;
   border-radius: 90%;
   cursor: pointer;
+}
+
+.card-body #contact-avatar input {
+  display: none;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  margin: -1px;
 }
 
 .card-body #contact-info {
@@ -120,6 +136,7 @@ button {
 .form input {
   border: 1px solid #000;
   border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   padding: .5rem;
 }
 
