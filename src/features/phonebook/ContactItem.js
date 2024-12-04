@@ -19,7 +19,8 @@ export const ContactItem = ({ contact }) => {
 
   const handleEditSave = (e) => {
     e.preventDefault();
-    dispatch(editContactAsync({ id: contact.id, name, phone }));
+    const data = { name, phone };
+    dispatch(editContactAsync({ id: contact.id, data }));
     setIsEditing(false);
   };
 
