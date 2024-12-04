@@ -81,6 +81,7 @@ button {
   border: 1px solid #eee;
   object-fit: cover;
   border-radius: 90%;
+  cursor: pointer;
 }
 
 .card-body #contact-info {

@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { faPenToSquare, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DeleteContact } from './DeleteContact';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { deleteContacts, editContacts } from './phonebookSlice';
 
 export const ContactItem = ({ contact }) => {
@@ -11,8 +11,6 @@ export const ContactItem = ({ contact }) => {
   const [name, setName] = useState(contact.name);
   const [phone, setPhone] = useState(contact.phone);
   const dispatch = useDispatch();
-  const keyword = useSelector((state) => state.phonebook.searchKeyword);
-  const sort = useSelector((state) => state.phonebook.sortOrder);
   const fileInputRef = useRef(null);
 
   const handleEdit = (e) => {
