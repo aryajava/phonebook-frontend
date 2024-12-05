@@ -12,6 +12,7 @@ export const getContacts = (page, keyword = '', sort = 'asc') => {
 // get avatar image
 export const getAvatarContact = (id, avatar) => {
   if (!avatar) return `${getBaseURL()}/images/defaultAvatar.png`;
+  if (avatar.startsWith('http') || avatar.startsWith('https')) return avatar;
   return `${getBaseURL()}/images/${id}/${avatar}`;
 };
 

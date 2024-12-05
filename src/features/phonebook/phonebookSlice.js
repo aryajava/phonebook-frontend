@@ -3,16 +3,17 @@ import { createContact, deleteContact, getAvatarContact, getContacts, updateCont
 
 const initialState = {
   contacts: [],
-  // isFetching: false,
   searchKeyword: '',
   sortOrder: 'asc',
   page: 1,
+  hasMore: true,
   status: 'idle',
 };
 
 export const getContactsAsync = createAsyncThunk(
   'phonebook/getContacts',
   async ({ page = 1, keyword = '', sort = 'asc' }) => {
+    console.log(`Fetching contacts with page: ${page}, keyword: ${keyword}, sort: ${sort}`);
     const response = await getContacts(page, keyword, sort);
     return { data: response.data, page, keyword, sort };
   }
@@ -66,6 +67,9 @@ export const phonebookSlice = createSlice({
     setSortOrder: (state, action) => {
       state.sortOrder = action.payload;
     },
+    setHasMore: (state, action) => {
+      state.hasMore = action.payload
+    },
     addContact: (state, action) => {
       state.contacts = [action.payload, ...state.contacts];
     },
@@ -90,23 +94,38 @@ export const phonebookSlice = createSlice({
         state.page = action.payload.page;
         state.searchKeyword = action.payload.keyword;
         state.sortOrder = action.payload.sort;
-        if (Array.isArray(action.payload.data.phonebooks)) {
-          state.contacts = action.payload.data.phonebooks.map(contact => {
-            return {
-              ...contact,
-              avatar: getAvatarContact(contact.id, contact.avatar)
-            };
-          });
-        } else {
-          console.error('Expected an array but got:', action.payload.data);
+
+        // Periksa apakah ini halaman terakhir
+        const isLastPage =
+          !Array.isArray(action.payload.data.phonebooks) || // Jika tidak ada data sama sekali
+          action.payload.data.phonebooks.length === 0; // Jika array kosong
+
+        // Perbarui kontak jika masih ada data
+        if (!isLastPage && Array.isArray(action.payload.data.phonebooks)) {
+          state.contacts = Array.isArray(state.contacts) ? [
+            ...state.contacts,
+            ...action.payload.data.phonebooks
+              .map((contact) => ({
+                ...contact,
+                avatar: getAvatarContact(contact.id, contact.avatar),
+              }))
+              .filter(
+                (newContact) =>
+                  !state.contacts.some((existingContact) => existingContact.id === newContact.id)
+              ),
+          ] : [];
+        } else if (isLastPage) {
+          console.log('No more contacts to fetch.');
         }
+        // Set `hasMore` berdasarkan apakah ini halaman terakhir
+        state.hasMore = !isLastPage;
       })
       .addCase(addContactAsync.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(addContactAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.contacts = action.payload;
+        state.contacts = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(editContactAsync.pending, (state) => {
         state.status = 'loading';
@@ -143,9 +162,13 @@ export const {
   removeContact,
 } = phonebookSlice.actions;
 
-export const addContacts = (data) => async (dispatch) => {
+export const addContacts = (data) => async (dispatch, getState) => {
+  const state = getState();
+  const currentKeyword = state.phonebook.searchKeyword;
+  const currentSortOrder = state.phonebook.sortOrder;
   dispatch(addContact(data));
-  dispatch(addContactAsync(data));
+  await dispatch(addContactAsync(data));
+  dispatch(getContactsAsync({ page: 1, keyword: currentKeyword, sort: currentSortOrder }));
 };
 
 export const editContacts = (data) => async (dispatch, getState) => {

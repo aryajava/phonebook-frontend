@@ -1,27 +1,22 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { addContacts, setContacts } from './phonebookSlice';
+import { addContacts } from './phonebookSlice';
 
 export const AddContact = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const keyword = useSelector((state) => state.phonebook.searchKeyword);
-  const sort = useSelector((state) => state.phonebook.sortOrder);
 
   const handleSave = (e) => {
     e.preventDefault();
-    dispatch(addContacts({ name, phone })).then(() => {
-      dispatch(setContacts({ page: 1, keyword, sort }));
-    });
+    dispatch(addContacts({ name, phone }));
     navigate('/');
   };
 
   const handleCancel = (e) => {
     e.preventDefault();
-    dispatch(setContacts({ page: 1, keyword, sort }));
     navigate('/');
   };
 
