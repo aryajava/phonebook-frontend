@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { faSearch, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { setSearchKeyword, setSortOrder } from './phonebookSlice';
+import { resetContacts } from './phonebookSlice';
 import { faArrowUpAZ, faArrowDownAZ } from '@fortawesome/free-solid-svg-icons';
 
 export const PhonebookHeader = () => {
@@ -23,12 +23,13 @@ export const PhonebookHeader = () => {
     e.preventDefault();
     const newSortOrder = sort === 'asc' ? 'desc' : 'asc';
     setSort(newSortOrder);
-    dispatch(setSortOrder(newSortOrder));
+    dispatch(resetContacts({ searchKeyword: keyword, sortOrder: newSortOrder }));
   };
 
   const handleSearch = (e) => {
-    setKeyword(e.target.value);
-    dispatch(setSearchKeyword(e.target.value));
+    const newKeyword = e.target.value;
+    setKeyword(newKeyword);
+    dispatch(resetContacts({ searchKeyword: newKeyword, sortOrder: sort }));
   };
 
   const handleAdd = (e) => {

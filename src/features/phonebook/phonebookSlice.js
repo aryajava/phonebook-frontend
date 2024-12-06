@@ -21,9 +21,13 @@ export const getContactsAsync = createAsyncThunk(
 
 export const addContactAsync = createAsyncThunk(
   'phonebook/addContact',
-  async (data) => {
-    const response = await createContact(data);
-    return response.data;
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await createContact(data);
+      return response.data;
+    } catch (error) {
+
+    }
   }
 );
 
@@ -82,6 +86,13 @@ export const phonebookSlice = createSlice({
     },
     removeContact: (state, action) => {
       state.contacts = state.contacts.filter(item => item.id !== action.payload.id);
+    },
+    resetContacts: (state, action) => {
+      state.contacts = [];
+      state.page = 1;
+      state.hasMore = true;
+      state.searchKeyword = action.payload.searchKeyword;
+      state.sortOrder = action.payload.sortOrder;
     },
   },
   extraReducers: (builder) => {
@@ -160,6 +171,7 @@ export const {
   addContact,
   editContact,
   removeContact,
+  resetContacts,
 } = phonebookSlice.actions;
 
 export const addContacts = (data) => async (dispatch, getState) => {
