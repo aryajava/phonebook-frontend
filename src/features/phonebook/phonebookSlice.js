@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { createContact, deleteContact, getAvatarContact, getContacts, updateContact } from './api/phonebookApi';
+import { createContact, deleteContact, getAvatarContact, getContacts, updateAvatarContact, updateContact } from './api/phonebookApi';
 
 const initialState = {
   contacts: [],
@@ -50,8 +50,10 @@ export const deleteContactAsync = createAsyncThunk(
 export const updateAvatarContactAsync = createAsyncThunk(
   'phonebook/updateAvatarContact',
   async ({ id, avatar }) => {
-    await updateContact(id, { avatar });
-    return { id, avatar };
+    const uploadAvatar = new FormData();
+    uploadAvatar.append('avatar', avatar);
+    const response = await updateAvatarContact(id, uploadAvatar);
+    return { id, avatar: response.data.avatar };
   }
 );
 
@@ -82,6 +84,13 @@ export const phonebookSlice = createSlice({
       const index = state.contacts.findIndex(contact => contact.id === id);
       if (index !== -1) {
         state.contacts[index] = { ...state.contacts[index], ...data };
+      }
+    },
+    avatarContact: (state, action) => {
+      const { id, avatar } = action.payload;
+      const contact = state.contacts.find(contact => contact.id === id);
+      if (contact) {
+        contact.avatar = URL.createObjectURL(avatar);;
       }
     },
     removeContact: (state, action) => {
@@ -153,6 +162,24 @@ export const phonebookSlice = createSlice({
           return contact;
         });
       })
+      .addCase(updateAvatarContactAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateAvatarContactAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.contacts = state.contacts.map(contact => {
+          if (contact.id === action.payload.id) {
+            return {
+              ...contact,
+              avatar: getAvatarContact(contact.id, action.payload.avatar)
+            };
+          }
+          return contact;
+        });
+      })
+      .addCase(updateAvatarContactAsync.rejected, (state) => {
+        state.status = 'failed';
+      })
       .addCase(deleteContactAsync.pending, (state) => {
         state.status = 'loading';
       })
@@ -170,6 +197,7 @@ export const {
   setSortOrder,
   addContact,
   editContact,
+  avatarContact,
   removeContact,
   resetContacts,
 } = phonebookSlice.actions;
@@ -190,6 +218,12 @@ export const editContacts = (data) => async (dispatch, getState) => {
   dispatch(editContact(data));
   await dispatch(editContactAsync(data));
   dispatch(getContactsAsync({ page: 1, keyword: currentKeyword, sort: currentSortOrder }));
+};
+
+export const updateAvatarContacts = (id, avatar) => async (dispatch) => {
+  console.log(`Updating avatar for contact with id: ${id}, avatar: ${avatar}`);
+  dispatch(avatarContact({ id, avatar }));
+  await dispatch(updateAvatarContactAsync({ id, avatar }));
 };
 
 export const deleteContacts = (id) => async (dispatch, getState) => {

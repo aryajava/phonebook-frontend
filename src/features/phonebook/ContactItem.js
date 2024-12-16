@@ -3,7 +3,7 @@ import { faPenToSquare, faSave, faTrash } from '@fortawesome/free-solid-svg-icon
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DeleteContact } from './DeleteContact';
 import { useDispatch } from 'react-redux';
-import { deleteContacts, editContacts } from './phonebookSlice';
+import { deleteContacts, editContacts, updateAvatarContacts } from './phonebookSlice';
 
 export const ContactItem = ({ contact }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -31,8 +31,9 @@ export const ContactItem = ({ contact }) => {
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
-    console.log(`File: ${JSON.stringify(e.target.files)}`);
-    console.log(`File: ${JSON.stringify(file)}`);
+    if (file) {
+      dispatch(updateAvatarContacts(contact.id, file));
+    }
   }
 
   const handleShowModal = (e) => {
