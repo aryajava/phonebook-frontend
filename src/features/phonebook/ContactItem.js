@@ -8,8 +8,10 @@ import { deleteContacts, editContacts, updateAvatarContacts } from './phonebookS
 export const ContactItem = ({ contact }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState('');
   const [name, setName] = useState(contact.name);
   const [phone, setPhone] = useState(contact.phone);
+
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
 
@@ -18,23 +20,35 @@ export const ContactItem = ({ contact }) => {
     setIsEditing(true);
   };
 
-  const handleEditSave = (e) => {
+  const handleEditSave = async (e) => {
     e.preventDefault();
     const data = { name, phone };
-    setIsEditing(false);
-    dispatch(editContacts({ id: contact.id, data }));
+    const result = await dispatch(editContacts({ id: contact.id, data }));
+    if (result.payload?.error) {
+      // Tangkap pesan error dari payload
+      setError(result.payload.error);
+    } else {
+      setError(''); // Reset error jika berhasil
+      setIsEditing(false);
+    }
   };
+
 
   const handleImageClick = () => {
     fileInputRef.current.click();
-  }
+  };
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      dispatch(updateAvatarContacts(contact.id, file));
+      const result = await dispatch(updateAvatarContacts(contact.id, file));
+      if (result.payload?.error) {
+        setError(result.payload.error);
+      } else {
+        setError('');
+      }
     }
-  }
+  };
 
   const handleShowModal = (e) => {
     e.preventDefault();
@@ -53,6 +67,7 @@ export const ContactItem = ({ contact }) => {
   return (
     <>
       <div className='card'>
+        {error && <div className='alert-error'>{error}</div>}
         <div className='card-body'>
           <div id='contact-avatar'>
             <img src={contact.avatar} alt={contact.name} onClick={handleImageClick} />
@@ -64,29 +79,51 @@ export const ContactItem = ({ contact }) => {
             />
           </div>
           <div id='contact-info'>
-            {
-              isEditing ?
-                (
-                  <>
-                    <input type='text' id='name' placeholder='Name' value={name} onChange={(e) => setName(e.target.value)} />
-                    <input type='text' id='phone' placeholder='Phone' value={phone} onChange={(e) => setPhone(e.target.value)} />
-                  </>
-                ) :
-                (
-                  <>
-                    <p id='name'>{contact.name}</p>
-                    <p id='phone'>{contact.phone}</p>
-                  </>
-                )
-            }
-            <button type="button" onClick={!isEditing ? handleEdit : handleEditSave}><FontAwesomeIcon icon={!isEditing ? faPenToSquare : faSave} /></button>
-            {
-              !isEditing && <button type="button" onClick={handleShowModal}><FontAwesomeIcon icon={faTrash} /></button>
-            }
+            {isEditing ? (
+              <>
+                <input
+                  type='text'
+                  id='name'
+                  placeholder='Name'
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+                <input
+                  type='text'
+                  id='phone'
+                  placeholder='Phone'
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </>
+            ) : (
+              <>
+                <p id='name'>{contact.name}</p>
+                <p id='phone'>{contact.phone}</p>
+              </>
+            )}
+            <button
+              type="button"
+              onClick={!isEditing ? handleEdit : handleEditSave}
+            >
+              <FontAwesomeIcon icon={!isEditing ? faPenToSquare : faSave} />
+            </button>
+            {!isEditing && (
+              <button type="button" onClick={handleShowModal}>
+                <FontAwesomeIcon icon={faTrash} />
+              </button>
+            )}
           </div>
         </div>
       </div>
-      {showModal && <DeleteContact show={showModal} onClose={handleCloseModal} onDelete={handleDelete} data={contact} />}
+      {showModal && (
+        <DeleteContact
+          show={showModal}
+          onClose={handleCloseModal}
+          onDelete={handleDelete}
+          data={contact}
+        />
+      )}
     </>
   );
 };

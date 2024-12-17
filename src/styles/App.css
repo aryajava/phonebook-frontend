@@ -58,6 +58,7 @@ button {
 
 .list {
   display: flex;
+  align-items: center;
   justify-content: center;
   flex-wrap: wrap;
   gap: 1rem;
@@ -69,6 +70,7 @@ button {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   border-radius: 5px;
   width: 250px;
+  /* height: 105px; */
 }
 
 .card-body {
@@ -238,4 +240,10 @@ button {
 
 .close {
   cursor: pointer;
+}
+
+.alert-error {
+  background-color: rgb(211, 138, 138);
+  text-align: center;
+  padding: .3rem;
 }

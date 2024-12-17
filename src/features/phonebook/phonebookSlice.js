@@ -8,12 +8,12 @@ const initialState = {
   page: 1,
   hasMore: true,
   status: 'idle',
+  error: null,
 };
 
 export const getContactsAsync = createAsyncThunk(
   'phonebook/getContacts',
   async ({ page = 1, keyword = '', sort = 'asc' }) => {
-    console.log(`Fetching contacts with page: ${page}, keyword: ${keyword}, sort: ${sort}`);
     const response = await getContacts(page, keyword, sort);
     return { data: response.data, page, keyword, sort };
   }
@@ -26,16 +26,20 @@ export const addContactAsync = createAsyncThunk(
       const response = await createContact(data);
       return response.data;
     } catch (error) {
-
+      return rejectWithValue(error.response.data);
     }
   }
 );
 
 export const editContactAsync = createAsyncThunk(
   'phonebook/editContact',
-  async ({ id, data }) => {
-    const response = await updateContact(id, data);
-    return response.data;
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await updateContact(id, data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
   }
 );
 
@@ -49,11 +53,15 @@ export const deleteContactAsync = createAsyncThunk(
 
 export const updateAvatarContactAsync = createAsyncThunk(
   'phonebook/updateAvatarContact',
-  async ({ id, avatar }) => {
-    const uploadAvatar = new FormData();
-    uploadAvatar.append('avatar', avatar);
-    const response = await updateAvatarContact(id, uploadAvatar);
-    return { id, avatar: response.data.avatar };
+  async ({ id, avatar }, { rejectWithValue }) => {
+    try {
+      const uploadAvatar = new FormData();
+      uploadAvatar.append('avatar', avatar);
+      const response = await updateAvatarContact(id, uploadAvatar);
+      return { id, avatar: response.data.avatar };
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
   }
 );
 
@@ -103,6 +111,9 @@ export const phonebookSlice = createSlice({
       state.searchKeyword = action.payload.searchKeyword;
       state.sortOrder = action.payload.sortOrder;
     },
+    setError: (state, action) => {
+      state.error = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -134,8 +145,6 @@ export const phonebookSlice = createSlice({
                   !state.contacts.some((existingContact) => existingContact.id === newContact.id)
               ),
           ] : [];
-        } else if (isLastPage) {
-          console.log('No more contacts to fetch.');
         }
         // Set `hasMore` berdasarkan apakah ini halaman terakhir
         state.hasMore = !isLastPage;
@@ -147,8 +156,13 @@ export const phonebookSlice = createSlice({
         state.status = 'idle';
         state.contacts = Array.isArray(action.payload) ? action.payload : [];
       })
+      .addCase(addContactAsync.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload.error;
+      })
       .addCase(editContactAsync.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
       .addCase(editContactAsync.fulfilled, (state, action) => {
         state.status = 'idle';
@@ -161,6 +175,10 @@ export const phonebookSlice = createSlice({
           }
           return contact;
         });
+      })
+      .addCase(editContactAsync.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload.error;
       })
       .addCase(updateAvatarContactAsync.pending, (state) => {
         state.status = 'loading';
@@ -177,8 +195,9 @@ export const phonebookSlice = createSlice({
           return contact;
         });
       })
-      .addCase(updateAvatarContactAsync.rejected, (state) => {
+      .addCase(updateAvatarContactAsync.rejected, (state, action) => {
         state.status = 'failed';
+        state.error = action.payload.error;
       })
       .addCase(deleteContactAsync.pending, (state) => {
         state.status = 'loading';
@@ -200,30 +219,39 @@ export const {
   avatarContact,
   removeContact,
   resetContacts,
+  setError,
 } = phonebookSlice.actions;
 
 export const addContacts = (data) => async (dispatch, getState) => {
   const state = getState();
   const currentKeyword = state.phonebook.searchKeyword;
   const currentSortOrder = state.phonebook.sortOrder;
-  dispatch(addContact(data));
-  await dispatch(addContactAsync(data));
-  dispatch(getContactsAsync({ page: 1, keyword: currentKeyword, sort: currentSortOrder }));
+  // dispatch(addContact(data));
+  const result = await dispatch(addContactAsync(data));
+  if (addContactAsync.fulfilled.match(result)) {
+    dispatch(getContactsAsync({ page: 1, keyword: currentKeyword, sort: currentSortOrder }));
+  }
+  return result;
 };
 
-export const editContacts = (data) => async (dispatch, getState) => {
+export const editContacts = ({ id, data }) => async (dispatch, getState) => {
   const state = getState();
   const currentKeyword = state.phonebook.searchKeyword;
   const currentSortOrder = state.phonebook.sortOrder;
-  dispatch(editContact(data));
-  await dispatch(editContactAsync(data));
-  dispatch(getContactsAsync({ page: 1, keyword: currentKeyword, sort: currentSortOrder }));
+
+  dispatch(editContact({ id, data }));
+  const result = await dispatch(editContactAsync({ id, data }));
+  if (editContactAsync.fulfilled.match(result)) {
+    dispatch(getContactsAsync({ page: 1, keyword: currentKeyword, sort: currentSortOrder }));
+  }
+  return result;
 };
 
+
+
 export const updateAvatarContacts = (id, avatar) => async (dispatch) => {
-  console.log(`Updating avatar for contact with id: ${id}, avatar: ${avatar}`);
-  dispatch(avatarContact({ id, avatar }));
-  await dispatch(updateAvatarContactAsync({ id, avatar }));
+  // dispatch(avatarContact({ id, avatar }));
+  return await dispatch(updateAvatarContactAsync({ id, avatar }));
 };
 
 export const deleteContacts = (id) => async (dispatch, getState) => {

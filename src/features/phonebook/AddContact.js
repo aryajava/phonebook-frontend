@@ -6,13 +6,19 @@ import { addContacts } from './phonebookSlice';
 export const AddContact = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [error, setError] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    dispatch(addContacts({ name, phone }));
-    navigate('/');
+    const result = await dispatch(addContacts({ name, phone }));
+    if (result.payload?.error) {
+      setError(result.payload.error);
+    } else {
+      setError('');
+      navigate('/');
+    }
   };
 
   const handleCancel = (e) => {
@@ -23,6 +29,7 @@ export const AddContact = () => {
   return (
     <>
       <div className='form'>
+        {error && <div className='alert-error'>{error}</div>}
         <input type='text' id='name' placeholder='Name' value={name} onChange={(e) => setName(e.target.value)} />
         <input type='text' id='phone' placeholder='Phone' value={phone} onChange={(e) => setPhone(e.target.value)} />
         <div className='form-action'>

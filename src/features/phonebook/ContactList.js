@@ -14,7 +14,6 @@ export const ContactList = () => {
   const observerTarget = useRef(null);
 
   useEffect(() => {
-    console.log('useEffect triggered with:', { page, keyword, sort });
     dispatch(getContactsAsync({ page, keyword, sort }));
   }, [dispatch, page, keyword, sort]);
 
